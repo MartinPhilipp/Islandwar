@@ -11,7 +11,7 @@ import random
 import os
 import time
 import math
-import Islandwar_levels as Levels
+import islandwar_levels as Levels
 
 #print(L.levels(3))
 
