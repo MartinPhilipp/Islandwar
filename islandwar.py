@@ -1257,8 +1257,10 @@ class Viewer(object):
                     #dist = v.length
                     #print("dist:" ,dist)
                     if dist < i.size//2:
+                        if self.click_indicator_time > self.playtime:
+                            self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
                         # -------------- send ship ----------------
-                        if len(self.island_selected) != 0: #Island selected?
+                        if len(self.island_selected) != 0 and self.click_indicator_time < self.playtime: #Island selected?
                             for s in Game.islandgroup: #Which island is selected?
                                 if (self.island_selected[0],self.island_selected[1]) == s.pos:
                                     if distance((self.island_selected[0],self.island_selected[1]), i.pos) != 0: #is selected island != target island?
@@ -1272,10 +1274,10 @@ class Viewer(object):
                                                 e = pygame.math.Vector2(1,0)
                                                 angle = e.angle_to(m)
                                                 Ship(pos=pygame.math.Vector2(self.island_selected[0],self.island_selected[1])+start, destination=i.pos, move=move, angle=angle, empire_color=s.empire_color)
+                        self.click_indicator_time = self.playtime + 0.25
                         # ----------------- select island ---------------
-                        else:
-                            self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
-                            self.click_indicator_time = self.playtime + 5
+                        #else:
+                        #    self.click_indicator_time = self.playtime + 0.25
                         break
                 else:
                     self.click_indicator_time = 0
@@ -1285,10 +1287,8 @@ class Viewer(object):
             #m = pygame.mouse.get_pressed()
             #if m[0]:
                 
-            if self.playtime < self.click_indicator_time:
+            if self.island_selected:
                 pygame.draw.circle(self.screen, (100,100,100), (int(self.island_selected[0]),-int(self.island_selected[1])), self.island_selected[2]//2+10)
-            else:
-                self.island_selected = []
 
 
             #-----------collision detection ------
