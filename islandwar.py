@@ -11,9 +11,23 @@ import random
 import os
 import time
 import math
-import islandwar_levels as Levels
+import Islandwar_levels as Levels
+import Islandwar_menu as Menu
 
 #print(L.levels(3))
+def structurize_text(text, linelength):
+    """returns a list containing strings with the split up text with less or equal chars than the linelength"""
+    struct_text = []
+    textline = ""
+    words = text.split()
+    for word in words:
+        if len(textline + word) <= linelength:
+            textline += word + " "
+        else:
+            struct_text.append(textline)
+            textline = "" + word + " "
+    struct_text.append(textline)
+    return struct_text
 
 def randomize_color(color, delta=50):
     d=random.randint(-delta, delta)
@@ -86,17 +100,18 @@ class Game():
     for l in Levels.levels.keys():
         if int(l) <= 0:
             level -= 1 #for every tutorial level we go one level below 0
-    enemy_color = [(255,0,0)]
+    enemy_color = [(255,0,0),(255,165,0)]
     player_color = (0,255,0)
     player_wood = 0
     player_iron = 0
     player_ships = 0
     player_islands = 0
-    
-    enemy_wood = 0
-    enemy_iron = 0
     enemy_ships = 0
     enemy_islands = 0
+    enemy1_wood = 0
+    enemy1_iron = 0
+    enemy2_wood = 0
+    enemy2_iron = 0
     wood_islandgroup = pygame.sprite.Group()
     iron_islandgroup = pygame.sprite.Group()
     ship_islandgroup = pygame.sprite.Group()
@@ -402,7 +417,7 @@ class Island(VectorSprite):
             self.ai()
             
     def ai(self):
-        if Game.enemy_wood < 5:
+        if (Game.enemy_color[0] == self.empire_color and Game.enemy1_wood < 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_wood < 5):
             if random.random() < 0.005:
                 if self.ships > 0: #are there any ships?
                     target = []
@@ -422,7 +437,6 @@ class Island(VectorSprite):
                                 target = [d,i.pos]
                     if len(target) != 0:
                         self.ships -= 1
-                        print("Wood",self.pos,target)
                         s = pygame.math.Vector2(self.pos[0],self.pos[1])
                         v = target[1] - s
                         m = v.normalize() * 30
@@ -431,11 +445,10 @@ class Island(VectorSprite):
                         e = pygame.math.Vector2(1,0)
                         angle = e.angle_to(m)
                         Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
-        if Game.enemy_iron < 5:
+        if (Game.enemy_color[0] == self.empire_color and Game.enemy1_iron < 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_iron < 5):
             if random.random() < 0.005:
                 if self.ships > 0: #are there any ships?
                     target = []
-                    print(Game.iron_islandgroup)
                     for i in Game.iron_islandgroup:
                         d = distance(self.pos,i.pos)
                         if i.empire_color == self.empire_color:
@@ -452,7 +465,6 @@ class Island(VectorSprite):
                                 target = [d,i.pos]
                     if len(target) != 0:
                         self.ships -= 1
-                        print("Iron",self.pos,target)
                         v = target[1] - self.pos
                         m = v.normalize() * 30
                         move = pygame.math.Vector2(m)
@@ -460,7 +472,7 @@ class Island(VectorSprite):
                         e = pygame.math.Vector2(1,0)
                         angle = e.angle_to(m)
                         Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
-        if Game.enemy_iron > 5 and Game.enemy_wood > 5:
+        if (Game.enemy_color[0] == self.empire_color and Game.enemy1_iron > 5 and Game.enemy1_wood > 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_iron > 5 and Game.enemy2_wood > 5):
             if random.random() < 0.005:
                 if self.ships > 0: #are there any ships?
                     target = []
@@ -480,7 +492,6 @@ class Island(VectorSprite):
                                 target = [d,i.pos]
                     if len(target) != 0:
                         self.ships -= 1
-                        print("Ships",self.pos,target)
                         v = target[1] - self.pos
                         m = v.normalize() * 30
                         move = pygame.math.Vector2(m)
@@ -508,7 +519,6 @@ class Island(VectorSprite):
                     if len(target) != 0:
                         self.ships -= 1
                         v = target[1] - self.pos
-                        print("Main",self.pos,target)
                         m = v.normalize() * 30
                         move = pygame.math.Vector2(m)
                         start = v.normalize() * (self.size//2 + 25)# 25 = length of ship
@@ -543,8 +553,10 @@ class Wood_Island(Island):
         Island.update(self, seconds)
         if self.empire_color == Game.player_color:
             Game.player_wood += 0.01
-        elif self.empire_color in Game.enemy_color:
-            Game.enemy_wood += 0.01
+        elif self.empire_color == Game.enemy_color[0]:
+            Game.enemy1_wood += 0.01
+        elif self.empire_color == Game.enemy_color[1]:
+            Game.enemy2_wood += 0.01
         else:
             pass
         #write(self.image, "{}".format(self.ships), x=self.size-10, y=self.size-self.size//5,  fontsize=self.size//5, color=(255,0,0))
@@ -576,8 +588,10 @@ class Iron_Island(Island):
         Island.update(self, seconds)
         if self.empire_color == Game.player_color:
             Game.player_iron += 0.01
-        elif self.empire_color in Game.enemy_color:
-            Game.enemy_iron += 0.01
+        elif self.empire_color == Game.enemy_color[0]:
+            Game.enemy1_iron += 0.01
+        elif self.empire_color == Game.enemy_color[1]:
+            Game.enemy2_iron += 0.01
         else:
             pass
         #write(self.image, "{}".format(self.ships), x=self.size-10, y=self.size-self.size//5,  fontsize=self.size//5, color=(255,0,0))
@@ -611,16 +625,32 @@ class Ship_Island(Island):
             if Game.player_iron >= 5 and Game.player_wood >= 5:
                 Game.player_iron -= 5
                 Game.player_wood -= 5
-                self.ships += 1
-        elif self.empire_color in Game.enemy_color:
-            if Game.enemy_iron >= 5 and Game.enemy_wood >= 5:
-                Game.enemy_iron -= 5
-                Game.enemy_wood -= 5
-                self.ships += 1
+                ship_islands = []
+                for i in Game.ship_islandgroup: 
+                    if i.empire_color == Game.player_color:
+                        ship_islands.append(i)
+                random.choice(ship_islands).ships += 1
+        elif self.empire_color == Game.enemy_color[0]:
+            if Game.enemy1_iron >= 5 and Game.enemy1_wood >= 5:
+                Game.enemy1_iron -= 5
+                Game.enemy1_wood -= 5
+                enemy1_ship_islands = []
+                for i in Game.ship_islandgroup: 
+                    if i.empire_color == Game.enemy_color[0]:
+                        enemy1_ship_islands.append(i)
+                random.choice(enemy1_ship_islands).ships += 1
+        elif self.empire_color == Game.enemy_color[1]:
+            if Game.enemy2_iron >= 5 and Game.enemy2_wood >= 5:
+                Game.enemy2_iron -= 5
+                Game.enemy2_wood -= 5
+                enemy2_ship_islands = []
+                for i in Game.ship_islandgroup: 
+                    if i.empire_color == Game.enemy_color[1]:
+                        enemy2_ship_islands.append(i)
+                random.choice(enemy2_ship_islands).ships += 1
         else:
             pass
                 
-
 class Main_Island(Island):
 
     def __init__(self, **kwargs):
@@ -706,7 +736,6 @@ class Ship(VectorSprite):
         VectorSprite.update(self, seconds)
         island = self.radar()
         if island:
-            print("Collision!")
             route = self.find_way(island)
             self.move.rotate_ip(route)
             angle = pygame.math.Vector2(1,0).angle_to(self.move)
@@ -740,39 +769,6 @@ class Viewer(object):
     height = 0
     images={}
     
-    
-    menu = {"main":      ["Play", "Tutorial", "Levels", "Help", "Credits", "Settings","End the game"],
-            "Tutorial":   ["back", "Tutorial 1", "Tutorial 2", "Tutorial 3", "Tutorial 4", "Tutorial 5"],
-            "Levels":     ["back", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5"],
-            "Help":       ["back"],
-            "Credits":    ["back", "Ines Schnabl", "Martin Schnabl", ],
-            "Settings":   ["back", "Screenresolution", "Fullscreen"],
-            "Resolution": ["back"],
-            "Fullscreen": ["back", "True", "False"],
-            }
-            
-            
-            
-    descr = {"Resume" :           ["Resume to the", "game"],                                           #resume
-             "Martin Schnabl" :   ["The programmer of", "this game."],
-             "Ines Schnabl":      ["Martin's younger sister", "and responsible for", "the graphics"],
-             "Settings" :         ["Change the", "screenresolution", "only in the", "beginning!"],
-             "Tutorial 1":        ["An introduction to", "the basics of the", "game"],
-             "Tutorial 2":        ["More complex management", "of your ships"],
-             "Tutorial 3":        ["Teaches you how", "to build ships", "in the shipyard."],
-             "Tutorial 4":        ["Your first encounter", "with enemy ships."],
-             "Tutorial 5":        ["Teaches you the", "strategies to win", "the game."],
-             }
-    menu_images = {"Fluffball" : "fluffball_menu",
-                   "Donut"     : "donut_menu",
-                   "Cookie"    : "cookie_menu",
-                   "Car wheel" : "car wheel_menu",
-                   "Cat"       : "baby cat_menu",
-                   }
- 
-    history = ["main"]
-    cursor = 0
-    name = "main"
     fullscreen = False
 
     def __init__(self, width=640, height=400, fps=30):
@@ -792,6 +788,7 @@ class Viewer(object):
         self.end_game = False
         self.newlevel = False
         self.end_gametime = 0
+        self.load_graphics()
         # ------ background images ------
         self.backgroundfilenames = [] # every .jpg file in folder 'data'
         try:
@@ -818,7 +815,7 @@ class Viewer(object):
             x = pair[1:comma]
             y = pair[comma+2:-1]
             li.append(str(x)+"x"+str(y))
-        Viewer.menu["Screenresolution"] = li
+        Menu.menu["Screenresolution"] = li
         self.set_screenresolution()
 
     def loadbackground(self):
@@ -847,6 +844,11 @@ class Viewer(object):
     def load_sprites(self):
         pass
         
+    def load_graphics(self):
+        pass
+        #Viewer.images["tutorial1"] = pygame.image.load(os.path.join("data", "tutorial1.png")).convert_alpha()
+        #Viewer.images["tutorial1"] = pygame.transform.scale(Viewer.images["tutorial1"], (320, 140))
+        
     def clean_up(self):
         for i in Game.islandgroup:
             i.kill()
@@ -856,12 +858,6 @@ class Viewer(object):
             g.empty()
     
     def new_level(self):
-        Game.player_iron = 0
-        Game.player_wood = 0
-        Game.enemy_iron = 0
-        Game.enemy_wood = 0
-        self.clean_up()
-        
         try: 
             islands = Levels.create_sprites(Game.level)
         except:
@@ -870,9 +866,19 @@ class Viewer(object):
             for l in Levels.levels.keys():
                 if int(l) <= 0:
                     Game.level -= 1 #for every tutorial level we go one level below 0
+            self.new_level()
             self.menu_run()
-        finally:
-            islands = Levels.create_sprites(Game.level)
+            return
+        #finally:
+        #    islands = Levels.create_sprites(Game.level)
+        
+        Game.player_iron = 0
+        Game.player_wood = 0
+        Game.enemy1_iron = 0
+        Game.enemy1_wood = 0
+        Game.enemy2_iron = 0
+        Game.enemy2_wood = 0
+        self.clean_up()
 
         for x in range(len(islands["Main_islands"])):
             if islands["Main_islands"][x][1] == Game.player_color:
@@ -1019,6 +1025,7 @@ class Viewer(object):
                 lines = Viewer.descr[text]
                 for y, line in enumerate(lines):
                     write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
+            #elif 
            # ---- menu_images -----
             if text in Viewer.menu_images:
                 self.screen.blit(Viewer.images[Viewer.menu_images[text]], (1020,100))
@@ -1035,7 +1042,7 @@ class Viewer(object):
             #pygame.mixer.music.pause()
             milliseconds = self.clock.tick(self.fps) #
             seconds = milliseconds / 1000
-            text = Viewer.menu[Viewer.name][Viewer.cursor]
+            text = Menu.menu[Menu.name][Menu.cursor]
             # -------- events ------
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -1046,29 +1053,29 @@ class Viewer(object):
                     if event.key == pygame.K_ESCAPE:
                         running = False
                     if event.key == pygame.K_UP:
-                        Viewer.cursor -= 1
-                        Viewer.cursor = max(0, Viewer.cursor) # not < 0
+                        Menu.cursor -= 1
+                        Menu.cursor = max(0, Menu.cursor) # not < 0
                         #Viewer.menusound.play()
                     if event.key == pygame.K_DOWN:
-                        Viewer.cursor += 1
-                        Viewer.cursor = min(len(Viewer.menu[Viewer.name])-1,Viewer.cursor) # not > menu entries
+                        Menu.cursor += 1
+                        Menu.cursor = min(len(Menu.menu[Menu.name])-1,Menu.cursor) # not > menu entries
                         #Viewer.menusound.play()
                     if event.key == pygame.K_RETURN:
                         if text == "End the game":
                             Game.quit_game = True
                             running = False
-                        elif text in Viewer.menu:
+                        elif text in Menu.menu:
                             # changing to another menu
-                            Viewer.history.append(text) 
-                            Viewer.name = text
+                            Menu.history.append(text) 
+                            Menu.name = text
                             Viewer.cursor = 0
                         elif text == "Play":
                             running = False
                         elif text == "back":
-                            Viewer.history = Viewer.history[:-1] # remove last entry
-                            Viewer.cursor = 0
-                            Viewer.name = Viewer.history[-1] # get last entry
-                        elif Viewer.name == "Screenresolution":
+                            Menu.history = Menu.history[:-1] # remove last entry
+                            Menu.cursor = 0
+                            Menu.name = Menu.history[-1] # get last entry
+                        elif Menu.name == "Screenresolution":
                             # text is something like 800x600
                             t = text.find("x")
                             if t != -1:
@@ -1078,19 +1085,20 @@ class Viewer(object):
                                 Viewer.height = y
                                 self.set_screenresolution()
                                 self.prepare_sprites()
-                        elif Viewer.name == "Levels":
-                            Game.level = int(text[-1])
-                            self.new_level()
-                            running = False
-                        elif Viewer.name == "Tutorial":
+                        elif Menu.name[0:6] == "Level ":
+                            if text[6:] in Levels.levels.keys():
+                                Game.level = int(text[6:])
+                                self.new_level()
+                                running = False
+                        elif Menu.name == "Tutorial":
                             t = 0
                             for l in Levels.levels.keys():
                                 if int(l) <= 0:
                                     t += 1
-                            Game.level = (int(text[-1]))-t
+                            Game.level = (int(text[9:]))-t
                             self.new_level()
                             running = False
-                        elif Viewer.name == "Fullscreen":
+                        elif Menu.name == "Fullscreen":
                             if text == "True":
                                 #Viewer.menucommandsound.play()
                                 Viewer.fullscreen = True
@@ -1119,28 +1127,42 @@ class Viewer(object):
 
             # --- paint menu ----
             # ---- name of active menu and history ---
-            write(self.screen, text="you are here:", x=200, y=50, color=(0,255,255), fontsize=15)
+            write(self.screen, text="You are here:", x=200, y=50, color=(0,255,255), fontsize=15)
             
             t = "main"
-            for nr, i in enumerate(Viewer.history[1:]):
+            for nr, i in enumerate(Menu.history[1:]):
                 #if nr > 0:
                 t+=(" > ")
                 t+=(i)
             write(self.screen, text=t, x=200,y=70,color=(0,255,255), fontsize=15)
             # --- menu items ---
-            menu = Viewer.menu[Viewer.name]
+            menu = Menu.menu[Menu.name]
             for y, item in enumerate(menu):
                 write(self.screen, text=item, x=Viewer.width//2-500, y=100+y*50, color=(255,255,255), fontsize=30)
             # --- cursor ---
-            write(self.screen, text="-->", x=Viewer.width//2-600, y=100+ Viewer.cursor * 50, color=(0,0,0), fontsize=30)
+            write(self.screen, text="-->", x=Viewer.width//2-600, y=100+ Menu.cursor * 50, color=(0,0,0), fontsize=30)
             # ---- descr ------
-            if text in Viewer.descr:
-                lines = Viewer.descr[text]
+            if text in Menu.descr:
+                lines = structurize_text(Menu.descr[text], Menu.linelength)
+                for y, line in enumerate(lines):
+                    write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
+            elif text[0:6] == "Level ":
+                if text[6:] in Levels.level_descriptions.keys():
+                    lines = structurize_text(Levels.level_descriptions[text[6:]],Menu.linelength)
+                    for y, line in enumerate(lines):
+                        write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
+            elif text[0:9] == "Tutorial ":
+                t = 0
+                lines = []
+                for l in Levels.levels.keys():
+                    if int(l) <= 0:
+                        t += 1
+                    lines = structurize_text(Levels.levels_descriptions[text[-1]-t], Menu.linelength)
                 for y, line in enumerate(lines):
                     write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
            # ---- menu_images -----
-            if text in Viewer.menu_images:
-                self.screen.blit(Viewer.images[Viewer.menu_images[text]], (1020,100))
+            if text in Menu.menu_images:
+                self.screen.blit(Viewer.images[Menu.menu_images[text]], (1020,100))
                 
             # -------- next frame -------------
             pygame.display.flip()
@@ -1210,9 +1232,9 @@ class Viewer(object):
             
             # -------------- write explanations for the current level on the screen ------------------
             if str(Game.level) in Levels.level_descriptions.keys():
-                for x in range(len(Levels.level_descriptions[str(Game.level)])):
-                    #print(x)
-                    write(self.screen, Levels.level_descriptions[str(Game.level)][x], x=200, y=50+x*25)
+                lines = structurize_text(Levels.level_descriptions[str(Game.level)],70)
+                for y, line in enumerate(lines):
+                    write(self.screen, line, x=200, y=50+y*25)
 
             # ------------------win or lose --------------------
             Game.player_ships = 0
@@ -1289,7 +1311,6 @@ class Viewer(object):
                 
             if self.island_selected:
                 pygame.draw.circle(self.screen, (100,100,100), (int(self.island_selected[0]),-int(self.island_selected[1])), self.island_selected[2]//2+10)
-
 
             #-----------collision detection ------
             for i in Game.islandgroup:
