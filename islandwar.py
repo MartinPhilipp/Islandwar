@@ -1,10 +1,10 @@
 """
-author: 
+author: Martin Philipp Schnabl
 email: horstjens@gmail.com
 contact: see http://spielend-programmieren.at/de:kontakt
 license: gpl, see http://www.gnu.org/licenses/gpl-3.0.de.html
 download: 
-idea: clean python3/pygame template using pygame.math.vector2
+idea: python3/pygame game coordinating ship attacks
 """
 import pygame
 import random
@@ -14,7 +14,6 @@ import math
 import Islandwar_levels as Levels
 import Islandwar_menu as Menu
 
-#print(L.levels(3))
 def structurize_text(text, linelength):
     """returns a list containing strings with the split up text with less or equal chars than the linelength"""
     struct_text = []
@@ -922,116 +921,6 @@ class Viewer(object):
         Main_Island.groups = self.allgroup, Game.islandgroup, Game.main_islandgroup
         
         self.new_level()
-        
-    def startmenu_run(self):
-        running = True
-        while running:
-            #pygame.mixer.music.pause()
-            milliseconds = self.clock.tick(self.fps) #
-            seconds = milliseconds / 1000
-            text = Viewer.startmenu[Viewer.name][Viewer.cursor]
-            # -------- events ------
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return -1 # running = False
-                # ------- pressed and released key ------
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        return -1 # running = False
-                    if event.key == pygame.K_UP:
-                        Viewer.cursor -= 1
-                        Viewer.cursor = max(0, Viewer.cursor) # not < 0
-                        #Viewer.menusound.play()
-                    if event.key == pygame.K_DOWN:
-                        Viewer.cursor += 1
-                        Viewer.cursor = min(len(Viewer.startmenu[Viewer.name])-1,Viewer.cursor) # not > menu entries
-                        #Viewer.menusound.play()
-                    if event.key == pygame.K_RETURN:
-                        if text == "quit":
-                            return -1
-                            Viewer.menucommandsound.play()
-                        elif text in Viewer.startmenu:
-                            # changing to another menu
-                            Viewer.history.append(text) 
-                            Viewer.name = text
-                            Viewer.cursor = 0
-                        elif text == "Resume":
-                            return
-                        elif text == "back":
-                            Viewer.history = Viewer.history[:-1] # remove last entry
-                            Viewer.cursor = 0
-                            Viewer.name = Viewer.history[-1] # get last entry
-                        elif Viewer.name == "Screenresolution":
-                            # text is something like 800x600
-                            t = text.find("x")
-                            if t != -1:
-                                x = int(text[:t])
-                                y = int(text[t+1:])
-                                Viewer.width = x
-                                Viewer.height = y
-                                self.set_screenresolution()
-                                self.prepare_sprites()
-                        elif Viewer.name == "Levels":
-                            Game.level = int(text[-1])
-                            self.new_level()
-                        elif Viewer.name == "Tutorial":
-                            Game.level = -(int(text[-1]))
-                            self.new_level()
-                        elif Viewer.name == "Fullscreen":
-                            if text == "True":
-                                #Viewer.menucommandsound.play()
-                                Viewer.fullscreen = True
-                                self.set_screenresolution()
-                            elif text == "False":
-                                #Viewer.menucommandsound.play()
-                                Viewer.fullscreen = False
-                                self.set_screenresolution()
-                            
-                        
-            # ------delete everything on screen-------
-            self.screen.blit(self.background, (0, 0))
-            
-            # -------------- UPDATE all sprites -------             
-            self.flytextgroup.update(seconds)
-
-            # ----------- clear, draw , update, flip -----------------
-            self.allgroup.draw(self.screen)
-            
-            
-            pygame.draw.rect(self.screen,(170,170,170),(200,90,350,350))
-            pygame.draw.rect(self.screen,(200,200,200),(600,90,350,350))
-            pygame.draw.rect(self.screen,(230,230,230),(1000,90,350,350))
-            
-            self.flytextgroup.draw(self.screen)
-
-            # --- paint menu ----
-            # ---- name of active menu and history ---
-            write(self.screen, text="you are here:", x=200, y=50, color=(0,255,255), fontsize=15)
-            
-            t = "main"
-            for nr, i in enumerate(Viewer.history[1:]):
-                #if nr > 0:
-                t+=(" > ")
-                t+=(i)
-            write(self.screen, text=t, x=200,y=70,color=(0,255,255), fontsize=15)
-            # --- menu items ---
-            menu = Viewer.startmenu[Viewer.name]
-            for y, item in enumerate(menu):
-                write(self.screen, text=item, x=Viewer.width//2-500, y=100+y*50, color=(255,255,255), fontsize=30)
-            # --- cursor ---
-            write(self.screen, text="-->", x=Viewer.width//2-600, y=100+ Viewer.cursor * 50, color=(0,0,0), fontsize=30)
-            # ---- descr ------
-            if text in Viewer.descr:
-                lines = Viewer.descr[text]
-                for y, line in enumerate(lines):
-                    write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
-            #elif 
-           # ---- menu_images -----
-            if text in Viewer.menu_images:
-                self.screen.blit(Viewer.images[Viewer.menu_images[text]], (1020,100))
-                
-            # -------- next frame -------------
-            pygame.display.flip()
 
     def menu_run(self):
         """Not The mainloop"""
@@ -1068,7 +957,7 @@ class Viewer(object):
                             # changing to another menu
                             Menu.history.append(text) 
                             Menu.name = text
-                            Viewer.cursor = 0
+                            Menu.cursor = 0
                         elif text == "Play":
                             running = False
                         elif text == "back":
