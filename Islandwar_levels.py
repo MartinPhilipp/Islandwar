@@ -73,7 +73,7 @@ levels = {#"Levelnr":{"Islandname":[((pos1), (Color1),ships, ((pos2), (Color2),S
 
 level_descriptions = {"-4":"You are the leader of the island with a green ring around it. Your aim is to conquer all the enemy islands on the map. Double click on your island to select it, then on the enemy island to send a ship.",
                       "-3":"On this map, there are three enemy islands. Conquer every one of them.",
-                      "-2":"You can build more ships in the shipyard. For every new ship, you first need 5 pieces of iron and wood.",
+                      "-2":"You can build more ships in the shipyard. For every new ship, you first need 5 pieces of iron and wood. You can see your resources in the top left corner of the screen.",
                       "-1":"The enemy can have ships too. If you want to win, you have to defeat them and take all their islands.",
                       "0" :"If you want to win this map, you'll have to collect resources and build more ships. Don't let the enemy take the resource islands or the shipyard!",
                       "1" :"It is time for your first real battle. Good luck!",
