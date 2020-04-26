@@ -5,9 +5,9 @@ menu = {"main":       ["Play", "Tutorial", "Levels", "Help", "Credits", "Setting
         "Level 5-9":  ["back", "Level 5", "Level 6", "Level 7", "Level 8", "Level 9"], 
         "Level 10-14":["back", "Level 10", "Level 11", "Level 12", "Level 13", "Level 14"],
         "Level 15-19":["back", "Level 15", "Level 16", "Level 17", "Level 18", "Level 19"],
-        "Level 20-25":  ["back", "Level 20", "Level 21", "Level 22", "Level 23", "Level 24", "Level 25"],  
-        "Help":       ["back"],
-        "Credits":    ["back", "Ines Schnabl", "Martin Schnabl", ],
+        "Level 20-25":["back", "Level 20", "Level 21", "Level 22", "Level 23", "Level 24", "Level 25"],  
+        "Help":       ["back", "Main island", "Wood island", "Iron island", "Ship island",],
+        "Credits":    ["back", "Ines Schnabl", "Martin Schnabl", "Julia Steger"],
         "Settings":   ["back", "Screenresolution", "Fullscreen"],
         "Resolution": ["back"],
         "Fullscreen": ["back", "True", "False"],
@@ -18,6 +18,7 @@ menu = {"main":       ["Play", "Tutorial", "Levels", "Help", "Credits", "Setting
 descr = {"Resume"        :"Resume to the game",
          "Martin Schnabl":"The programmer of this game.",
          "Ines Schnabl"  :"Martin's younger sister and responsible for the graphics",
+         "Julia Steger"  :"Responsible for game testing, ideas for enhancements and bug detecting",
          "Settings"      :"Change the screenresolution only in the beginning!",
          "Tutorial 1"    :"An introduction to the basics of the game",
          "Tutorial 2"    :"More complex management of your ships",
@@ -25,11 +26,15 @@ descr = {"Resume"        :"Resume to the game",
          "Tutorial 4"    :"Your first encounter with enemy ships.",
          "Tutorial 5"    :"Teaches you the strategies to win the game.",
          "Tutorial"      :"Learn everything you need to know to play this game.",
+         "Main island"   :"This is the island where most of your ships will be stationed in the beginning. In the later game, it has no real purpose (yet), but you can use it to distract your enemies.",
+         "Wood island"   :"If you capture this island, you will earn wood every second.",
+         "Iron island"   :"If you capture this island, you will earn iron every second.",
+         "Ship island"   :"On this island there is a shipyard that will produce a new ship whenever you have 5 pieces of wood and 5 ingots of iron.",
          }
 
 menu_images = {"Tutorial 42" : "tutorial42",
                }
-linelength = 20
+linelength = 27
 history = ["main"]
 cursor = 0
 name = "main"
