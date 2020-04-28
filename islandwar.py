@@ -35,9 +35,9 @@ def randomize_color(color, delta=50):
     color = max(0, color)
     return color
 
-def make_text(msg="pygame is cool", fontcolor=(255, 0, 255), fontsize=42, font=None):
+def make_text(msg="pygame is cool", fontcolor=(255, 0, 255), fontsize=42, font="mono"):
     """returns pygame surface with text. You still need to blit the surface."""
-    myfont = pygame.font.SysFont(font, fontsize)
+    myfont = pygame.font.SysFont(font, fontsize, bold=True) #Needs font!=None, fontsize and bold=True, otherwise error in .exe running
     mytext = myfont.render(msg, True, fontcolor)
     mytext = mytext.convert_alpha()
     return mytext
@@ -53,7 +53,7 @@ def write(background, text, x=50, y=150, color=(0,0,0),
         if center: # center text around x,y
             background.blit(surface, (x-fw//2, y-fh//2))
         else:      # topleft corner is x,y
-            background.blit(surface, (x,y))
+            background.blit(surface, (int(x),int(y)))
             
 def distance(point_1=(0, 0), point_2=(0, 0)):
     """Returns the distance between two points"""
@@ -95,6 +95,7 @@ def elastic_collision(sprite1, sprite2):
 class Game():
     quit_game = False
     difficulty = 0
+    speed = 1
     level = 1
     for l in Levels.levels.keys():
         if int(l) <= 0:
@@ -132,7 +133,7 @@ class Flytext(pygame.sprite.Sprite):
         self.x, self.y = x, y
         self.duration = duration  # duration of flight in seconds
         self.acc = acceleration_factor  # if < 1, Text moves slower. if > 1, text moves faster.
-        self.image = make_text(self.text, (self.r, self.g, self.b), fontsize)  # font 22
+        self.image = make_text(self.text, (self.r, self.g, self.b), fontsize)  # font 22 #------------------Error in the exe!!!-----------
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         self.time = 0 - delay
@@ -144,12 +145,11 @@ class Flytext(pygame.sprite.Sprite):
         else:
             self.y += self.dy * seconds
             self.x += self.dx * seconds
-            self.dy *= self.acc  # slower and slower
+            self.dy *= self.acc # slower and slower
             self.dx *= self.acc
-            self.rect.center = (self.x, self.y)
+            self.rect.center = (self.x,self.y)
             if self.time > self.duration:
                 self.kill()      # remove Sprite from screen and from groups
-                
 
 class VectorSprite(pygame.sprite.Sprite):
     """base class for sprites. this class inherits from pygames sprite class"""
@@ -304,11 +304,11 @@ class VectorSprite(pygame.sprite.Sprite):
                 boss = VectorSprite.numbers[self.bossnumber]
                 #self.pos = v.Vec2d(boss.pos.x, boss.pos.y)
                 self.pos = pygame.math.Vector2(boss.pos.x, boss.pos.y)
-        self.pos += self.move * seconds
-        self.distance_traveled += self.move.length() * seconds
+        self.pos += self.move * seconds * Game.speed
+        self.distance_traveled += self.move.length() * seconds * Game.speed
         self.age += seconds
         self.wallbounce()
-        self.rect.center = ( round(self.pos.x, 0), -round(self.pos.y, 0) )
+        self.rect.center = ( int(round(self.pos.x, 0)), -int(round(self.pos.y, 0)) )
 
     def wallbounce(self):
         # ---- bounce / kill on screen edge ----
@@ -417,7 +417,7 @@ class Island(VectorSprite):
             
     def ai(self):
         if (Game.enemy_color[0] == self.empire_color and Game.enemy1_wood < 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_wood < 5):
-            if random.random() < 0.005:
+            if random.random() < (0.005*Game.speed):
                 if self.ships > 0: #are there any ships?
                     target = []
                     for i in Game.wood_islandgroup:
@@ -445,7 +445,7 @@ class Island(VectorSprite):
                         angle = e.angle_to(m)
                         Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
         if (Game.enemy_color[0] == self.empire_color and Game.enemy1_iron < 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_iron < 5):
-            if random.random() < 0.005:
+            if random.random() < (0.005*Game.speed):
                 if self.ships > 0: #are there any ships?
                     target = []
                     for i in Game.iron_islandgroup:
@@ -472,7 +472,7 @@ class Island(VectorSprite):
                         angle = e.angle_to(m)
                         Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
         if (Game.enemy_color[0] == self.empire_color and Game.enemy1_iron > 5 and Game.enemy1_wood > 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_iron > 5 and Game.enemy2_wood > 5):
-            if random.random() < 0.005:
+            if random.random() < (0.005*Game.speed):
                 if self.ships > 0: #are there any ships?
                     target = []
                     for i in Game.ship_islandgroup:
@@ -498,7 +498,7 @@ class Island(VectorSprite):
                         e = pygame.math.Vector2(1,0)
                         angle = e.angle_to(m)
                         Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
-        if random.random() < 0.0001 + Game.enemy_ships*0.0005:
+        if random.random() < ((0.0001 + Game.enemy_ships*0.0005) *Game.speed):
             if self.ships > 0: #are there any ships?
                     target = []
                     for i in Game.main_islandgroup:
@@ -551,11 +551,11 @@ class Wood_Island(Island):
     def update(self, seconds):
         Island.update(self, seconds)
         if self.empire_color == Game.player_color:
-            Game.player_wood += 0.01
+            Game.player_wood += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[0]:
-            Game.enemy1_wood += 0.01
+            Game.enemy1_wood += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[1]:
-            Game.enemy2_wood += 0.01
+            Game.enemy2_wood += 0.3 * seconds * Game.speed
         else:
             pass
         #write(self.image, "{}".format(self.ships), x=self.size-10, y=self.size-self.size//5,  fontsize=self.size//5, color=(255,0,0))
@@ -586,11 +586,11 @@ class Iron_Island(Island):
     def update(self, seconds):
         Island.update(self, seconds)
         if self.empire_color == Game.player_color:
-            Game.player_iron += 0.01
+            Game.player_iron += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[0]:
-            Game.enemy1_iron += 0.01
+            Game.enemy1_iron += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[1]:
-            Game.enemy2_iron += 0.01
+            Game.enemy2_iron += 0.3 * seconds * Game.speed
         else:
             pass
         #write(self.image, "{}".format(self.ships), x=self.size-10, y=self.size-self.size//5,  fontsize=self.size//5, color=(255,0,0))
@@ -701,18 +701,15 @@ class Ship(VectorSprite):
         
     def radar(self):
         """Checks if an island is on a given position"""
-        #print(self.destination)
         checkpos = self.pos + self.move*2
         for i in Game.islandgroup:
             if self.destination == i.pos:
                 continue
             if distance(i.pos,checkpos) < i.size/2+30:
-                #print("Collision!")
                 return i        
         
     def find_way(self, island):
         """Calculates the shortest way around an island and returns +1 or -1 depending on the direction"""
-        #print(island)
         vector_island_to_destination = self.destination - island.pos #vector island-destination
         nvector_island_to_destination = pygame.math.Vector2(-vector_island_to_destination[1],vector_island_to_destination[0]) #vector with 90° to vector island-destination to the right
         vector_islandradius = nvector_island_to_destination.normalize() * island.size/2 #make nvector island-destination to length radius
@@ -725,7 +722,6 @@ class Ship(VectorSprite):
         angle_b = ((vector_i_ship*vector_i_b)/vector_i_ship.length()*vector_i_b.length()) #angle between vector_i_ship and vector_i_b
         route_a_length = math.pi * 2 * island.size/2 * (angle_a/360) + (self.destination - point_a).length() #length of route around point a
         route_b_length = math.pi * 2 * island.size/2 * (angle_b/360) + (self.destination - point_b).length() #length of route around point b
-        #print(route_a_length,route_b_length)
         if route_a_length <= route_b_length:
             return -1
         else:
@@ -735,29 +731,24 @@ class Ship(VectorSprite):
         VectorSprite.update(self, seconds)
         island = self.radar()
         if island:
-            route = self.find_way(island)
+            route = self.find_way(island)*Game.speed
             self.move.rotate_ip(route)
             angle = pygame.math.Vector2(1,0).angle_to(self.move)
             self.set_angle(angle)
-        #move_vector = self.move.normalize()
         destination_vector = (self.destination - self.pos)
-        #print(self.move, destination_vector)
-        #print(self.move.angle_to(destination_vector))
         angle_calculation = (self.move*destination_vector)/((self.move.length())*(destination_vector.length()))
         if angle_calculation > 1:       #minor error in the python calculations cause a number slightly above 1, this leads to gamecrash if you try to get the arccos from it
             angle_calculation = 1
         angle_move_destination = math.degrees(math.acos(angle_calculation))
         if angle_move_destination > 3:
-            #print("Nicht auf Kurs")
             if not island:
-                #print("Kursabweichung!",)
                 newangle_calculation = (self.move.rotate(-1)*destination_vector)/(self.move.rotate(-1).length()*destination_vector.length())
                 if newangle_calculation > 1:
                     newangle_calculation = 1
                 if math.degrees(math.acos(newangle_calculation)) < angle_move_destination:
-                    self.move = self.move.rotate(-1)
+                    self.move = self.move.rotate(-1*Game.speed)
                 else:
-                    self.move = self.move.rotate(1)
+                    self.move = self.move.rotate(1*Game.speed)
                 angle = pygame.math.Vector2(1,0).angle_to(self.move)
                 self.set_angle(angle)
         
@@ -833,7 +824,6 @@ class Viewer(object):
         self.background.convert()
         
     def set_screenresolution(self):
-        #print(self.width, self.height)
         if Viewer.fullscreen:
              self.screen = pygame.display.set_mode((self.width, self.height), pygame.DOUBLEBUF|pygame.FULLSCREEN)
         else:
@@ -868,9 +858,7 @@ class Viewer(object):
             self.new_level()
             self.menu_run()
             return
-        #finally:
-        #    islands = Levels.create_sprites(Game.level)
-        
+
         Game.player_iron = 0
         Game.player_wood = 0
         Game.enemy1_iron = 0
@@ -878,6 +866,7 @@ class Viewer(object):
         Game.enemy2_iron = 0
         Game.enemy2_wood = 0
         self.clean_up()
+        self.island_selected = []
 
         for x in range(len(islands["Main_islands"])):
             if islands["Main_islands"][x][1] == Game.player_color:
@@ -974,6 +963,15 @@ class Viewer(object):
                                 Viewer.height = y
                                 self.set_screenresolution()
                                 self.prepare_sprites()
+                        elif Menu.name == "Game speed":
+                            if text == "Slow":
+                                Game.speed = 0.5
+                            elif text == "Normal":
+                                Game.speed = 1
+                            elif text == "Fast":
+                                Game.speed = 3
+                            elif text == "Really fast":
+                                Game.speed = 5
                         elif Menu.name[0:6] == "Level ":
                             if text[6:] in Levels.levels.keys():
                                 Game.level = int(text[6:])
@@ -1059,7 +1057,7 @@ class Viewer(object):
     def run(self):
         """The mainloop"""
         running = True
-        Viewer.fullscreen = False
+        Viewer.fullscreen = True
         self.set_screenresolution()
         #pygame.mouse.set_visible(False)
         oldleft, oldmiddle, oldright  = False, False, False
@@ -1088,11 +1086,9 @@ class Viewer(object):
                 # ------- pressed and released key ------
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        running = False
+                        self.menu_run()
                     elif event.key == pygame.K_m:
-                        running = self.menu_run()
-                        if running is None:
-                            running = True
+                        self.menu_run()
             # delete everything on screen
             self.screen.blit(self.background, (0, 0))  # macht alles weiß
 
@@ -1142,7 +1138,6 @@ class Viewer(object):
                     Game.player_ships += 1
                 elif s.empire_color in Game.enemy_color:
                     Game.enemy_ships += 1
-            #print(Game.level, self.newlevel)
             if self.end_gametime < self.playtime:
                 if self.newlevel == True:
                     self.newlevel = False
@@ -1166,7 +1161,6 @@ class Viewer(object):
                     dist = distance((i.pos[0],i.pos[1]), (mouse_pos[0],-mouse_pos[1]))
                     #v = i.pos - pygame.math.Vector2(mouse_pos[0], mouse_pos[1])
                     #dist = v.length
-                    #print("dist:" ,dist)
                     if dist < i.size//2:
                         if self.click_indicator_time > self.playtime:
                             self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
@@ -1219,11 +1213,8 @@ class Viewer(object):
                                 i.ships += 1
                                 i.create_image()
                                 i.rect=i.image.get_rect()
-                                i.rect.center=(i.pos.x, -i.pos.y)
+                                i.rect.center=(int(i.pos.x), -int(i.pos.y))
                                 s.kill()
-            
-            #print(Game.main_islandgroup)
-
                     
                             # ----------- clear, draw , update, flip -----------------
             self.allgroup.draw(self.screen)
