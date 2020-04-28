@@ -8,9 +8,10 @@ menu = {"main":       ["Play", "Tutorial", "Levels", "Help", "Credits", "Setting
         "Level 20-25":["back", "Level 20", "Level 21", "Level 22", "Level 23", "Level 24", "Level 25"],  
         "Help":       ["back", "Main island", "Wood island", "Iron island", "Ship island",],
         "Credits":    ["back", "Ines Schnabl", "Martin Schnabl", "Julia Steger"],
-        "Settings":   ["back", "Screenresolution", "Fullscreen"],
+        "Settings":   ["back", "Game speed", "Screenresolution", "Fullscreen"],
         "Resolution": ["back"],
         "Fullscreen": ["back", "True", "False"],
+        "Game speed": ["back", "Slow", "Normal", "Fast", "Really fast"]
         }
             
             
