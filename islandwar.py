@@ -1162,7 +1162,8 @@ class Viewer(object):
                     #v = i.pos - pygame.math.Vector2(mouse_pos[0], mouse_pos[1])
                     #dist = v.length
                     if dist < i.size//2:
-                        if self.click_indicator_time > self.playtime:
+                        #if self.click_indicator_time > self.playtime:
+                        if self.island_selected == []:
                             self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
                         # -------------- send ship ----------------
                         if len(self.island_selected) != 0 and self.click_indicator_time < self.playtime: #Island selected?
@@ -1179,13 +1180,13 @@ class Viewer(object):
                                                 e = pygame.math.Vector2(1,0)
                                                 angle = e.angle_to(m)
                                                 Ship(pos=pygame.math.Vector2(self.island_selected[0],self.island_selected[1])+start, destination=i.pos, move=move, angle=angle, empire_color=s.empire_color)
-                        self.click_indicator_time = self.playtime + 0.25
+                        #self.click_indicator_time = self.playtime + 0.25
                         # ----------------- select island ---------------
                         #else:
                         #    self.click_indicator_time = self.playtime + 0.25
                         break
                 else:
-                    self.click_indicator_time = 0
+                    #self.click_indicator_time = 0
                     self.island_selected = []
             oldleft, oldmiddle, oldright = left, middle, right
             
