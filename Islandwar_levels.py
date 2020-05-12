@@ -65,10 +65,15 @@ levels = {#"Levelnr":{"Islandname":[((pos1), (Color1),ships, ((pos2), (Color2),S
                 "Iron_islands":[((1030,-600),(255,0,0),1),((1330,-200),(255,0,0),1)],#M...eM.eS
                 "Wood_islands":[((1030,-200),(255,0,0),1),((1330,-600),(255,0,0),1)],#....eI.eW
                 "Ship_islands":[((1330,-400),(255,0,0),1)]},
-           "12":{"Main_islands":[((200,-400),(0,255,0),3),((1230,-200),(255,0,0),5),((1230,-600),(255,165,0),5)],#.I..W.eM  #2 enemies
+           "12":{"Main_islands":[((400,-400),(0,255,0),5),((1030,-400),(255,0,0),7),],                                                 #I....W.....I
+                "Iron_islands":[((100,-200),(0,0,255),0),((100,-600),(0,0,255),0),((1330,-200),(0,0,255),0),((1330,-600),(0,0,255),0)],#W..M.S.eM..W
+                "Wood_islands":[((100,-400),(0,0,255),0),((715,-200),(0,0,255),0),((715,-600),(0,0,255),0),((1330,-400),(0,0,255),0)], #I....W.....I
+                "Ship_islands":[((715,-400),(0,0,255),0)]},
+           "13":{"Main_islands":[((200,-400),(0,255,0),3),((1230,-200),(255,0,0),5),((1230,-600),(255,165,0),5)],#.I..W.eM  #2 enemies
                 "Iron_islands":[((300,-200),(0,0,255),0),((930,-600),(0,0,255),0)],                              #M..S....
                 "Wood_islands":[((300,-600),(0,0,255),0),((930,-200),(0,0,255),0)],                              #.W..I.eM
                 "Ship_islands":[((715,-400),(0,0,255),0)]},
+           
            }
 
 level_descriptions = {"-4":"You are the leader of the island with a green ring around it. Your aim is to conquer all the enemy islands on the map. Double click on your island to select it, then on the enemy island to send a ship.",
@@ -87,8 +92,8 @@ level_descriptions = {"-4":"You are the leader of the island with a green ring a
                       "9" :"There is enough wood on the map, but you will have to fight for the iron.",
                       "10":"",
                       "11":"",
-                      "12":"Now you have to fight to enemy empires. Lets hope that they destroy each other instead of us.",
-                      "13":"Not programmed yet",
+                      "12":"",
+                      "13":"Now you have to fight to enemy empires. Lets hope that they destroy each other instead of us.",
                       "14":"Not programmed yet",
                       "15":"Not programmed yet",
                       "16":"Not programmed yet",
