@@ -73,7 +73,20 @@ levels = {#"Levelnr":{"Islandname":[((pos1), (Color1),ships, ((pos2), (Color2),S
                 "Iron_islands":[((300,-200),(0,0,255),0),((930,-600),(0,0,255),0)],                              #M..S....
                 "Wood_islands":[((300,-600),(0,0,255),0),((930,-200),(0,0,255),0)],                              #.W..I.eM
                 "Ship_islands":[((715,-400),(0,0,255),0)]},
-           
+           "14":{"Main_islands":[((200,-400),(255,0,0),5),((715,-300),(0,255,0),5),((1230,-400),(255,165,0),5)], #..I..M..W.  #2 enemies
+                "Iron_islands":[((300,-200),(0,0,255),0),((1130,-600),(0,0,255),0)],                              #.eM...eM.
+                "Wood_islands":[((300,-600),(0,0,255),0),((1130,-200),(0,0,255),0)],                              #..W..S..I.
+                "Ship_islands":[((715,-500),(0,0,255),0)]},
+           "15":{"Main_islands":[((715,-300),(0,255,0),5),((515,-500),(255,0,0),5),((915,-500),(255,165,0),5)],   #W...M...I  #2 enemies
+                "Iron_islands":[((200,-600),(0,0,255),0),((1230,-200),(0,0,255),0)],                              #S.eM.eM.S
+                "Wood_islands":[((200,-200),(0,0,255),0),((1230,-600),(0,0,255),0)],                              #I.......W
+                "Ship_islands":[((200,-400),(0,0,255),0),((1230,-400),(0,0,255),0)]},
+           "16":{"Main_islands":[((350,-150),(0,255,0),2,150),((350,-400),(0,255,0),5,150),((350,-650),(0,255,0),2,150),
+                 ((1230,-200),(255,0,0),10,300),((1230,-600),(255,165,0),10,300)],                                      #W...M...I  #2 enemies
+                "Iron_islands":[((150,-317),(0,255,0),0,75),((150,-483),(0,255,0),0,75)],                                    #S.eM.eM.S
+                "Wood_islands":[((150,-150),(0,255,0),0,75),((150,-650),(0,255,0),0,75)],                                    #I.......W
+                "Ship_islands":[((550,-400),(0,255,0),0,75),],
+                "Ships":(50,20)},
            }
 
 level_descriptions = {"-4":"You are the leader of the island with a green ring around it. Your aim is to conquer all the enemy islands on the map. Double click on your island to select it, then on the enemy island to send a ship.",
@@ -94,9 +107,9 @@ level_descriptions = {"-4":"You are the leader of the island with a green ring a
                       "11":"",
                       "12":"",
                       "13":"Now you have to fight to enemy empires. Lets hope that they destroy each other instead of us.",
-                      "14":"Not programmed yet",
-                      "15":"Not programmed yet",
-                      "16":"Not programmed yet",
+                      "14":"",
+                      "15":"",
+                      "16":"",
                       "17":"Not programmed yet",
                       "18":"Not programmed yet",
                       "19":"Not programmed yet",
