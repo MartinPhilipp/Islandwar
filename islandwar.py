@@ -1,11 +1,13 @@
 """
 author: Martin Philipp Schnabl
-email: horstjens@gmail.com
-contact: see http://spielend-programmieren.at/de:kontakt
+email: martin@schnabl.sc
+contact: find me under MartinPhilipp on Github 
 license: gpl, see http://www.gnu.org/licenses/gpl-3.0.de.html
-download: 
-idea: python3/pygame game coordinating ship attacks
+download: from Github/Islandwar
+idea: python3/pygame game, coordinating ship attacks
 """
+import this
+print("Praize!!!")
 import pygame
 import random
 import os
@@ -97,6 +99,7 @@ class Game():
     difficulty = 0
     speed = 1
     level = 1
+    ship_size = (50,20) #with pygame graphics: 50,10
     for l in Levels.levels.keys():
         if int(l) <= 0:
             level -= 1 #for every tutorial level we go one level below 0
@@ -244,8 +247,6 @@ class VectorSprite(pygame.sprite.Sprite):
             self.warp_on_edge = False
         if "dangerhigh" not in kwargs:
             self.dangerhigh = False
-        if "fluffball_color" not in kwargs:
-            self.fluffball_color = random.choice(["fluffballb.", "fluffballp.", "fluffballt.", "fluffballr."])
 
     def kill(self):
         if self.number in self.numbers:
@@ -409,6 +410,8 @@ class Island(VectorSprite):
             self.empire_color = (0,255,0)
         if "ships" not in kwargs:
             self.ships = 0
+        if "size" not in kwargs:
+            self.size = 100
             
     def update(self, seconds):
         VectorSprite.update(self, seconds)
@@ -536,17 +539,27 @@ class Wood_Island(Island):
         #    self.ships = 0
 
     def _overwrite_parameters(self):
-        self.size = 100
+        if self.size == None:
+            self.size = 100 
         #self.empire_color = (0,255,0)
 
     def create_image(self):
-        self.image = pygame.Surface((self.size,self.size))
-        pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
-        pygame.draw.circle(self.image, (0,128,0), (self.size//2,self.size//2), self.size//2-5)
-        write(self.image, "Wood production", x=5, y=40, fontsize=10, color=(1,1,1))
+        self.image = pygame.Surface((self.size+20,self.size+20))
+        pygame.draw.circle(self.image, self.empire_color, (self.size//2+10,self.size//2+10), self.size//2+10)
+        pygame.draw.circle(self.image, (0,0,255), (self.size//2+10,self.size//2+10), self.size//2+3)
+        Viewer.images["wood_island"] = pygame.transform.scale(Viewer.images["wood_island"], (self.size, self.size))
+        self.image1 = Viewer.images["wood_island"]
+        self.image.blit(self.image1, (10,10))
         self.image.set_colorkey((0,0,0))
-        self.rect= self.image.get_rect()
         self.image0 = self.image.copy()
+        self.rect = self.image.get_rect()
+        #self.image = pygame.Surface((self.size,self.size))
+        #pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
+        #pygame.draw.circle(self.image, (0,128,0), (self.size//2,self.size//2), self.size//2-5)
+        #write(self.image, "Wood production", x=5, y=40, fontsize=10, color=(1,1,1))
+        #self.image.set_colorkey((0,0,0))
+        #self.rect= self.image.get_rect()
+        #self.image0 = self.image.copy()
         
     def update(self, seconds):
         Island.update(self, seconds)
@@ -570,18 +583,28 @@ class Iron_Island(Island):
         #    self.ships = 0
     
     def _overwrite_parameters(self):
-        self.size = 100
+        if self.size == None:
+            self.size = 100 
         #self.ships = 5
         #self.empire_color = (0,255,0)
 
     def create_image(self):
-        self.image = pygame.Surface((self.size,self.size))
-        pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
-        pygame.draw.circle(self.image, (100,100,100), (self.size//2,self.size//2), self.size//2-5)
-        write(self.image, "Iron production", x=5, y=40, fontsize=10, color=(1,1,1))
+        self.image = pygame.Surface((self.size+20,self.size+20))
+        pygame.draw.circle(self.image, self.empire_color, (self.size//2+10,self.size//2+10), self.size//2+10)
+        pygame.draw.circle(self.image, (0,0,255), (self.size//2+10,self.size//2+10), self.size//2+3)
+        Viewer.images["iron_island"] = pygame.transform.scale(Viewer.images["iron_island"], (self.size, self.size))
+        self.image1 = Viewer.images["iron_island"]
+        self.image.blit(self.image1, (10,10))
         self.image.set_colorkey((0,0,0))
-        self.rect= self.image.get_rect()
         self.image0 = self.image.copy()
+        self.rect = self.image.get_rect()
+        #self.image = pygame.Surface((self.size,self.size))
+        #pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
+        #pygame.draw.circle(self.image, (100,100,100), (self.size//2,self.size//2), self.size//2-5)
+        #write(self.image, "Iron production", x=5, y=40, fontsize=10, color=(1,1,1))
+        #self.image.set_colorkey((0,0,0))
+        #self.rect= self.image.get_rect()
+        #self.image0 = self.image.copy()
         
     def update(self, seconds):
         Island.update(self, seconds)
@@ -605,18 +628,28 @@ class Ship_Island(Island):
         #    self.ships = 0
     
     def _overwrite_parameters(self):
-        self.size = 100
+        if self.size == None:
+            self.size = 100 
         #self.ships = 5
         #self.empire_color = (0,255,0)
 
     def create_image(self):
-        self.image = pygame.Surface((self.size,self.size))
-        pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
-        pygame.draw.circle(self.image, (140,100,20), (self.size//2,self.size//2), self.size//2-5)
-        write(self.image, "Ship production", x=5, y=40, fontsize=10, color=(1,1,1))
+        self.image = pygame.Surface((self.size+20,self.size+20))
+        pygame.draw.circle(self.image, self.empire_color, (self.size//2+10,self.size//2+10), self.size//2+10)
+        pygame.draw.circle(self.image, (0,0,255), (self.size//2+10,self.size//2+10), self.size//2+3)
+        Viewer.images["ship_island"] = pygame.transform.scale(Viewer.images["ship_island"], (self.size, self.size))
+        self.image1 = Viewer.images["ship_island"]
+        self.image.blit(self.image1, (10,10))
         self.image.set_colorkey((0,0,0))
-        self.rect= self.image.get_rect()
         self.image0 = self.image.copy()
+        self.rect = self.image.get_rect()
+        #self.image = pygame.Surface((self.size,self.size))
+        #pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
+        #pygame.draw.circle(self.image, (140,100,20), (self.size//2,self.size//2), self.size//2-5)
+        #write(self.image, "Ship production", x=5, y=40, fontsize=10, color=(1,1,1))
+        #self.image.set_colorkey((0,0,0))
+        #self.rect= self.image.get_rect()
+        #self.image0 = self.image.copy()
         
     def update(self, seconds):
         Island.update(self, seconds)
@@ -661,18 +694,29 @@ class Main_Island(Island):
 
     
     def _overwrite_parameters(self):
-        self.size = 200
+        if self.size == None:
+            self.size = 200 
+        #self.size = 200
         #self.ships = 5
         #self.empire_color = (0,255,0)
     
     def create_image(self):
-        self.image = pygame.Surface((self.size,self.size))
-        pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
-        pygame.draw.circle(self.image, (30,200,30), (self.size//2,self.size//2), self.size//2-5)
-        write(self.image, "Main Island", x=10, y=80, fontsize=20, color=(1,1,1))
+        self.image = pygame.Surface((self.size+20,self.size+20))
+        pygame.draw.circle(self.image, self.empire_color, (self.size//2+10,self.size//2+10), self.size//2+10)
+        pygame.draw.circle(self.image, (0,0,255), (self.size//2+10,self.size//2+10), self.size//2+3)
+        Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (self.size, self.size))
+        self.image1 = Viewer.images["main_island"]
+        self.image.blit(self.image1, (10,10))
         self.image.set_colorkey((0,0,0))
-        self.rect= self.image.get_rect()
         self.image0 = self.image.copy()
+        self.rect = self.image.get_rect()
+        #self.image = pygame.Surface((self.size,self.size))
+        #pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
+        #pygame.draw.circle(self.image, (30,200,30), (self.size//2,self.size//2), self.size//2-5)
+        #write(self.image, "Main Island", x=self.size//20, y=self.size//2, fontsize=self.size//10, color=(1,1,1))
+        #self.image.set_colorkey((0,0,0))
+        #self.rect= self.image.get_rect()
+        #self.image0 = self.image.copy()
     
     def update(self, seconds):
         Island.update(self, seconds)
@@ -687,17 +731,29 @@ class Ship(VectorSprite):
         if "empire_color" not in kwargs:
             self.empire_color = (0,0,255)
     
-    #def _overwrite_parameters(self):
+    def _overwrite_parameters(self):
+        self.size = Game.ship_size
         #self.empire_color = (0,255,0)
         #self.destination = random.choice(Game.islands)
         
     def create_image(self):
-        self.image = pygame.Surface((70,20))
-        pygame.draw.rect(self.image, (self.empire_color), (10,5,50,10), 0)
-        pygame.draw.rect(self.image, (140,100,20), (15,7,40,6), 0)
-        self.image.set_colorkey((0,0,0))
-        self.rect = self.image.get_rect()
+        if self.empire_color == Game.player_color:
+            Viewer.images["player_ship"] = pygame.transform.scale(Viewer.images["player_ship"], self.size)
+            self.image = Viewer.images["player_ship"]
+        elif self.empire_color == (255,0,0):
+            Viewer.images["red_empire_ship"] = pygame.transform.scale(Viewer.images["red_empire_ship"], self.size)
+            self.image = Viewer.images["red_empire_ship"]
+        else:
+            Viewer.images["ship"] = pygame.transform.scale(Viewer.images["ship"], self.size)
+            self.image = Viewer.images["ship"]
         self.image0 = self.image.copy()
+        self.rect = self.image.get_rect()
+        #self.image = pygame.Surface(self.size)
+        #pygame.draw.rect(self.image, (self.empire_color), (0,0,self.size[0],self.size[1]), 0)
+        #pygame.draw.rect(self.image, (140,100,20), (5,2,self.size[0]-10,self.size[1]-4), 0)
+        #self.image.set_colorkey((0,0,0))
+        ##self.rect = self.image.get_rect()
+        #self.image0 = self.image.copy()
         
     def radar(self):
         """Checks if an island is on a given position"""
@@ -774,6 +830,7 @@ class Viewer(object):
         self.fps = fps
         self.playtime = 0.0
         self.click_indicator_time = 0
+        self.last_click = 0
         self.island_selected = []
         self.end_game = False
         self.newlevel = False
@@ -834,9 +891,14 @@ class Viewer(object):
         pass
         
     def load_graphics(self):
-        pass
-        #Viewer.images["tutorial1"] = pygame.image.load(os.path.join("data", "tutorial1.png")).convert_alpha()
-        #Viewer.images["tutorial1"] = pygame.transform.scale(Viewer.images["tutorial1"], (320, 140))
+        Viewer.images["ship"] = pygame.image.load(os.path.join("data", "Ship.png")).convert_alpha()
+        Viewer.images["player_ship"] = pygame.image.load(os.path.join("data", "player_ship.png")).convert_alpha()
+        Viewer.images["red_empire_ship"] = pygame.image.load(os.path.join("data", "red_empire_ship.png")).convert_alpha()
+        Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
+        #Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (200, 200))
+        Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
+        Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
+        Viewer.images["ship_island"] = pygame.image.load(os.path.join("data", "ship_island.png")).convert_alpha()
         
     def clean_up(self):
         for i in Game.islandgroup:
@@ -848,7 +910,7 @@ class Viewer(object):
     
     def new_level(self):
         try: 
-            islands = Levels.create_sprites(Game.level)
+            level = Levels.create_sprites(Game.level)
         except:
             print("-------------------------You won the game------------------------")
             Game.level = 1
@@ -868,18 +930,39 @@ class Viewer(object):
         self.clean_up()
         self.island_selected = []
 
-        for x in range(len(islands["Main_islands"])):
-            if islands["Main_islands"][x][1] == Game.player_color:
-                p_ships = int(islands["Main_islands"][x][2]) + Game.difficulty
+        for x in range(len(level["Main_islands"])):
+            if level["Main_islands"][x][1] == Game.player_color:
+                p_ships = int(level["Main_islands"][x][2]) + Game.difficulty
             else: 
-                p_ships = islands["Main_islands"][x][2]
-            Main_Island(pos=pygame.math.Vector2(islands["Main_islands"][x][0]), empire_color = islands["Main_islands"][x][1], ships=p_ships)
-        for x in range(len(islands["Iron_islands"])):
-            Iron_Island(pos=pygame.math.Vector2(islands["Iron_islands"][x][0]), empire_color = islands["Iron_islands"][x][1], ships=islands["Iron_islands"][x][2])
-        for x in range(len(islands["Wood_islands"])):
-            Wood_Island(pos=pygame.math.Vector2(islands["Wood_islands"][x][0]), empire_color = islands["Wood_islands"][x][1], ships=islands["Wood_islands"][x][2])
-        for x in range(len(islands["Ship_islands"])):
-            Ship_Island(pos=pygame.math.Vector2(islands["Ship_islands"][x][0]), empire_color = islands["Ship_islands"][x][1], ships=islands["Ship_islands"][x][2])
+                p_ships = level["Main_islands"][x][2]
+            if len(level["Main_islands"][x]) == 4:
+                i_size = level["Main_islands"][x][3]
+            else:
+                i_size = None #default size
+            Main_Island(pos=pygame.math.Vector2(level["Main_islands"][x][0]), empire_color = level["Main_islands"][x][1], ships=p_ships, size=i_size)
+        for x in range(len(level["Iron_islands"])):
+            if len(level["Iron_islands"][x]) == 4:
+                i_size = level["Iron_islands"][x][3]
+            else:
+                i_size = None #default size
+            Iron_Island(pos=pygame.math.Vector2(level["Iron_islands"][x][0]), empire_color = level["Iron_islands"][x][1], ships=level["Iron_islands"][x][2], size=i_size)
+        for x in range(len(level["Wood_islands"])):
+            if len(level["Wood_islands"][x]) == 4:
+                i_size = level["Wood_islands"][x][3]
+            else:
+                i_size = None #default size
+            Wood_Island(pos=pygame.math.Vector2(level["Wood_islands"][x][0]), empire_color = level["Wood_islands"][x][1], ships=level["Wood_islands"][x][2], size=i_size)
+        for x in range(len(level["Ship_islands"])):
+            if len(level["Ship_islands"][x]) == 4:
+                i_size = level["Ship_islands"][x][3]
+            else:
+                i_size = None #default size
+            Ship_Island(pos=pygame.math.Vector2(level["Ship_islands"][x][0]), empire_color = level["Ship_islands"][x][1], ships=level["Ship_islands"][x][2], size=i_size)
+        
+        if "Ships" in level.keys():
+            Game.ship_size = level["Ships"]
+        else:
+            Game.ship_size = (50,20)
         
         for i in Game.islandgroup:
                 if i.empire_color == Game.player_color:
@@ -896,9 +979,7 @@ class Viewer(object):
         self.explosiongroup = pygame.sprite.Group()
         self.flytextgroup = pygame.sprite.Group()
         self.shipgroup = pygame.sprite.Group()
-        #self.wood_islandgroup = pygame.sprite.Group()
-        #self.iron_islandgroup = pygame.sprite.Group()
-        #Game.create_groups()
+        
         VectorSprite.groups = self.allgroup
         Explosion.groups = self.allgroup, self.explosiongroup
         Flytext.groups = self.allgroup, self.flytextgroup
@@ -1109,7 +1190,6 @@ class Viewer(object):
                 write(self.screen, "Tutorial {}".format(level), x=1280, y=30)
             else:
                 write(self.screen, "Level {}".format(level), x=1280, y=30)
-            #write(self.screen, "Iron = {:.0f}".format(Game.player_iron), x=10,y=50)
             
             for i in Game.islandgroup:
                  write(self.screen, "{}".format(i.ships), x=i.pos[0], y=-i.pos[1],  fontsize=i.size//5, color=(255,0,0))
@@ -1165,6 +1245,10 @@ class Viewer(object):
                         #if self.click_indicator_time > self.playtime:
                         if self.island_selected == []:
                             self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
+                        elif (self.playtime - self.last_click) < 0.25:
+                            self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
+                        else:
+                            self.last_click = self.playtime
                         # -------------- send ship ----------------
                         if len(self.island_selected) != 0 and self.click_indicator_time < self.playtime: #Island selected?
                             for s in Game.islandgroup: #Which island is selected?
@@ -1190,11 +1274,9 @@ class Viewer(object):
                     self.island_selected = []
             oldleft, oldmiddle, oldright = left, middle, right
             
-            #m = pygame.mouse.get_pressed()
-            #if m[0]:
                 
             if self.island_selected:
-                pygame.draw.circle(self.screen, (100,100,100), (int(self.island_selected[0]),-int(self.island_selected[1])), self.island_selected[2]//2+10)
+                pygame.draw.circle(self.screen, (100,100,100), (int(self.island_selected[0]),-int(self.island_selected[1])), self.island_selected[2]//2+25)
 
             #-----------collision detection ------
             for i in Game.islandgroup:
@@ -1220,7 +1302,7 @@ class Viewer(object):
                             # ----------- clear, draw , update, flip -----------------
             self.allgroup.draw(self.screen)
             for i in Game.islandgroup:
-                 write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-15, y=-i.pos[1]+i.size//5+15,  fontsize=i.size//5, color=(i.empire_color))
+                 write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(i.empire_color))
                         
             # -------- next frame -------------
             pygame.display.flip()
