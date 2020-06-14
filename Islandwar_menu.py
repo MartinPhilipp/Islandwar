@@ -33,7 +33,10 @@ descr = {"Resume"        :"Resume to the game",
          "Ship island"   :"On this island there is a shipyard that will produce a new ship whenever you have 5 pieces of wood and 5 ingots of iron.",
          }
 
-menu_images = {"Tutorial 42" : "tutorial42",
+menu_images = {"Main island" : "main_island",
+               "Wood island" : "wood_island",
+               "Iron island" : "iron_island",
+               "Ship island" : "ship_island",
                }
 linelength = 27
 history = ["main"]
