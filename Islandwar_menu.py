@@ -12,9 +12,7 @@ menu = {"main":       ["Play", "Tutorial", "Levels", "Help", "Credits", "Setting
         "Resolution": ["back"],
         "Fullscreen": ["back", "True", "False"],
         "Game speed": ["back", "Slow", "Normal", "Fast", "Really fast"]
-        }
-            
-            
+        }      
             
 descr = {"Resume"        :"Resume to the game",
          "Martin Schnabl":"The programmer of this game.",
