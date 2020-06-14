@@ -105,6 +105,7 @@ class Game():
             level -= 1 #for every tutorial level we go one level below 0
     enemy_color = [(255,0,0),(255,165,0)]
     player_color = (0,255,0)
+    neutral_color = (0,0,255)
     player_wood = 0
     player_iron = 0
     player_ships = 0
@@ -1085,7 +1086,12 @@ class Viewer(object):
 
             # ----------- clear, draw , update, flip -----------------
             self.allgroup.draw(self.screen)
-            
+            for i in Game.islandgroup:
+                if i.empire_color != Game.neutral_color:
+                    write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(i.empire_color))
+                else:
+                    if i.ships != 0:
+                       write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(1,1,1))
             
             pygame.draw.rect(self.screen,(170,170,170),(200,90,350,350))
             pygame.draw.rect(self.screen,(200,200,200),(600,90,350,350))
@@ -1130,6 +1136,7 @@ class Viewer(object):
                     write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
            # ---- menu_images -----
             if text in Menu.menu_images:
+                Viewer.images[Menu.menu_images[text]] = pygame.transform.scale(Viewer.images[Menu.menu_images[text]], (300, 300))
                 self.screen.blit(Viewer.images[Menu.menu_images[text]], (1020,100))
                 
             # -------- next frame -------------
@@ -1191,8 +1198,12 @@ class Viewer(object):
             else:
                 write(self.screen, "Level {}".format(level), x=1280, y=30)
             
-            for i in Game.islandgroup:
-                 write(self.screen, "{}".format(i.ships), x=i.pos[0], y=-i.pos[1],  fontsize=i.size//5, color=(255,0,0))
+            #for i in Game.islandgroup:--------------------------------------------------------------------------------------------------------------------
+            #    if i.color != Game.neutral_color:
+            #        write(self.screen, "{}".format(i.ships), x=i.pos[0], y=-i.pos[1],  fontsize=i.size//5, color=(255,0,0))
+            #    else:
+            #        if i.ships != 0:
+            #            write(self.screen, "{}".format(i.ships), x=i.pos[0], y=-i.pos[1],  fontsize=i.size//5, color=(255,0,0))
             self.allgroup.update(seconds)
             
             # -------------- write explanations for the current level on the screen ------------------
@@ -1302,7 +1313,12 @@ class Viewer(object):
                             # ----------- clear, draw , update, flip -----------------
             self.allgroup.draw(self.screen)
             for i in Game.islandgroup:
-                 write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(i.empire_color))
+                if i.empire_color != Game.neutral_color:
+                    write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(i.empire_color))
+                else:
+                    if i.ships != 0:
+                       write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(1,1,1))
+                 
                         
             # -------- next frame -------------
             pygame.display.flip()
