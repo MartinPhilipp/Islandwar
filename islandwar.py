@@ -6,6 +6,40 @@ license: gpl, see http://www.gnu.org/licenses/gpl-3.0.de.html
 download: from Github/Islandwar
 idea: python3/pygame game, coordinating ship attacks
 """
+
+
+
+"""
+Tutorial 1,2 gut,
+Tutorial 3: Inseln besser kennzeichnen, Schrift mit Pfeil/ Dauerhafte Symbole auf den Inseln?
+
+Klicken verbessern: Rechtsklick auswählen, Linksklick senden
+Nachricht an Spieler verbessern (Textfenster zu Beginn, Spieler drückt okay)
+Mehrspielrmodus
+
+
+Schwereskala: 1 leicht, 10 schwer:
+Tutorial 5: Zu schwer: 4/5, eventuell 2 Schiffe mehr für Spieler
+Level 1: Zu schwer: 5/6
+Level 2: Perfekt, Tausch mit 1?
+Level 3: Zu schwer: schwerer als Level 1
+Level 4: Angemessen
+Level 5: Gegner bringt sich selbst um (lenkt seine Schiffe auf überlegene Feinde)
+Level 6: Angemessen
+Level 7: Angemessen
+Level 8: 1 Schiff weniger für Gegner
+Level 9: In Ordnung
+Level 10: In Ordnung
+Level 11: Etwas schwer, weiter nach hinten
+Level 12: Perfekt
+Level 13: Einfach
+Level 14: Schwer, aber angemessen
+Level 15: Leichter als die davor
+Level 16: Viel zu einfach, in Entwicklung
+"""
+
+
+
 import this
 print("Praize!!!")
 import pygame
@@ -29,13 +63,6 @@ def structurize_text(text, linelength):
             textline = "" + word + " "
     struct_text.append(textline)
     return struct_text
-
-def randomize_color(color, delta=50):
-    d=random.randint(-delta, delta)
-    color = color + d
-    color = min(255,color)
-    color = max(0, color)
-    return color
 
 def make_text(msg="pygame is cool", fontcolor=(255, 0, 255), fontsize=42, font="mono"):
     """returns pygame surface with text. You still need to blit the surface."""
@@ -106,6 +133,8 @@ class Game():
     enemy_color = [(255,0,0),(255,165,0)]
     player_color = (0,255,0)
     neutral_color = (0,0,255)
+    gamemodes = ["Conquer","Defend","Collect"]
+    gamemode = "Conquer"
     player_wood = 0
     player_iron = 0
     player_ships = 0
@@ -120,6 +149,7 @@ class Game():
     iron_islandgroup = pygame.sprite.Group()
     ship_islandgroup = pygame.sprite.Group()
     main_islandgroup = pygame.sprite.Group()
+    nonresource_islandgroup = pygame.sprite.Group()
     islandgroup = pygame.sprite.Group()
     groups = [wood_islandgroup,iron_islandgroup,ship_islandgroup,main_islandgroup,islandgroup]
 
@@ -184,7 +214,6 @@ class VectorSprite(pygame.sprite.Sprite):
     def _default_parameters(self, **kwargs):    
         """get unlimited named arguments and turn them into attributes
            default values for missing keywords"""
-
         for key, arg in kwargs.items():
             setattr(self, key, arg)
         if "layer" not in kwargs:
@@ -356,54 +385,6 @@ class VectorSprite(pygame.sprite.Sprite):
             elif self.warp_on_edge:
                 self.pos.y = 0
 
-class Explosion():
-    
-    def __init__(self, pos, what="Spark", maxspeed=150, minspeed=20, color=(255,255,0),maxduration=2.5,gravityy=3.7,sparksmin=5,sparksmax=20,acc=1.0, min_angle=0, max_angle=360):
-
-        for s in range(random.randint(sparksmin,sparksmax)):
-            v = pygame.math.Vector2(1,0) # vector aiming right (0°)
-            a = random.randint(int(min_angle),int(max_angle))
-            v.rotate_ip(a)
-            g = pygame.math.Vector2(0, - gravityy)
-            speed = random.randint(minspeed, maxspeed)     #150
-            duration = random.random() * maxduration
-            if what == "Spark":     
-                Spark(pos=pygame.math.Vector2(pos.x, pos.y), angle= a, move=v*speed,
-                  max_age = duration, color=color, gravity = g)
-            elif what == "Crumb":
-                
-                Crumb(pos=pygame.math.Vector2(pos.x, pos.y), angle= a, move=v*speed,
-                  max_age = duration, color=color, gravity = g, acc=acc)
-        
-class Spark(VectorSprite):
-
-    def __init__(self, **kwargs):
-        VectorSprite.__init__(self, **kwargs)
-        if "gravity" not in kwargs:
-            self.gravity = pygame.math.Vector2(0, -3.7)
-    
-    def _overwrite_parameters(self):
-        self._layer = 2
-        self.kill_on_edge = True
-    
-    def create_image(self):
-        r,g,b = self.color
-        r = randomize_color(r,50)
-        g = randomize_color(g,50)
-        b = randomize_color(b,50)
-        self.image = pygame.Surface((10,10))
-        pygame.draw.line(self.image, (r,g,b), 
-                         (10,5), (5,5), 3)
-        pygame.draw.line(self.image, (r,g,b),
-                          (5,5), (2,5), 1)
-        self.image.set_colorkey((0,0,0))
-        self.rect= self.image.get_rect()
-        self.image0 = self.image.copy()
-
-    def update(self, seconds):
-        VectorSprite.update(self, seconds)
-        self.move += self.gravity
-
 class Island(VectorSprite):
     def __init__(self, **kwargs):
         VectorSprite.__init__(self, **kwargs)
@@ -505,7 +486,7 @@ class Island(VectorSprite):
         if random.random() < ((0.0001 + Game.enemy_ships*0.0005) *Game.speed):
             if self.ships > 0: #are there any ships?
                     target = []
-                    for i in Game.main_islandgroup:
+                    for i in Game.nonresource_islandgroup:
                         d = distance(self.pos,i.pos)
                         if i.empire_color == self.empire_color:
                             continue
@@ -965,6 +946,11 @@ class Viewer(object):
         else:
             Game.ship_size = (50,20)
         
+        if "Game mode" in level.keys() and level["Game mode"] in Game.gamemodes:
+            Game.gamemode = level["Game mode"]
+        else:
+            Game.gamemode = "Conquer"
+        
         for i in Game.islandgroup:
                 if i.empire_color == Game.player_color:
                     Game.player_ships += i.ships
@@ -977,19 +963,16 @@ class Viewer(object):
         """painting on the surface and create sprites"""
         self.load_sprites()
         self.allgroup =  pygame.sprite.LayeredUpdates() # for drawing
-        self.explosiongroup = pygame.sprite.Group()
         self.flytextgroup = pygame.sprite.Group()
         self.shipgroup = pygame.sprite.Group()
         
         VectorSprite.groups = self.allgroup
-        Explosion.groups = self.allgroup, self.explosiongroup
         Flytext.groups = self.allgroup, self.flytextgroup
-        Spark.groups = self.allgroup
         Ship.groups = self.allgroup, self.shipgroup
         Wood_Island.groups = self.allgroup, Game.islandgroup, Game.wood_islandgroup
         Iron_Island.groups = self.allgroup, Game.islandgroup, Game.iron_islandgroup
-        Ship_Island.groups = self.allgroup, Game.islandgroup, Game.ship_islandgroup
-        Main_Island.groups = self.allgroup, Game.islandgroup, Game.main_islandgroup
+        Ship_Island.groups = self.allgroup, Game.islandgroup, Game.ship_islandgroup, Game.nonresource_islandgroup
+        Main_Island.groups = self.allgroup, Game.islandgroup, Game.main_islandgroup, Game.nonresource_islandgroup
         
         self.new_level()
 
@@ -1059,6 +1042,10 @@ class Viewer(object):
                                 Game.level = int(text[6:])
                                 self.new_level()
                                 running = False
+                        elif text[0:8] == "Mission ":
+                            Game.level = int(text[8:]) + 100
+                            self.new_level()
+                            running = False
                         elif Menu.name == "Tutorial":
                             t = 0
                             for l in Levels.levels.keys():
@@ -1093,9 +1080,9 @@ class Viewer(object):
                     if i.ships != 0:
                        write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(1,1,1))
             
-            pygame.draw.rect(self.screen,(170,170,170),(200,90,350,350))
-            pygame.draw.rect(self.screen,(200,200,200),(600,90,350,350))
-            pygame.draw.rect(self.screen,(230,230,230),(1000,90,350,350))
+            pygame.draw.rect(self.screen,(170,170,170),(200,90,350,400))
+            pygame.draw.rect(self.screen,(200,200,200),(600,90,350,400))
+            pygame.draw.rect(self.screen,(230,230,230),(1000,90,350,400))
             
             self.flytextgroup.draw(self.screen)
 
@@ -1134,6 +1121,12 @@ class Viewer(object):
                     lines = structurize_text(Levels.levels_descriptions[text[-1]-t], Menu.linelength)
                 for y, line in enumerate(lines):
                     write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
+            elif text[0:8] == "Mission ":
+                level = str(int(text[8:])+100)
+                if level in Levels.level_descriptions.keys():
+                    lines = structurize_text(Levels.level_descriptions[level],Menu.linelength)
+                    for y, line in enumerate(lines):
+                        write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
            # ---- menu_images -----
             if text in Menu.menu_images:
                 Viewer.images[Menu.menu_images[text]] = pygame.transform.scale(Viewer.images[Menu.menu_images[text]], (300, 300))
@@ -1213,6 +1206,7 @@ class Viewer(object):
                     write(self.screen, line, x=200, y=50+y*25)
 
             # ------------------win or lose --------------------
+            
             Game.player_ships = 0
             Game.player_islands = 0
             Game.enemy_ships = 0
@@ -1229,6 +1223,7 @@ class Viewer(object):
                     Game.player_ships += 1
                 elif s.empire_color in Game.enemy_color:
                     Game.enemy_ships += 1
+            
             if self.end_gametime < self.playtime:
                 if self.newlevel == True:
                     self.newlevel = False
@@ -1236,14 +1231,18 @@ class Viewer(object):
                     self.new_level()
                 elif self.end_game == True:
                     break
-                elif Game.enemy_ships == 0 and Game.enemy_islands == 0:
-                    Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You won the level!", fontsize=30, color=Game.player_color)
-                    self.end_gametime = self.playtime + 5
-                    self.newlevel = True
-                elif Game.player_ships == 0 and Game.player_islands == 0:
-                    Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=30, color=random.choice(Game.enemy_color))
-                    self.end_gametime = self.playtime + 5
-                    self.end_game == True
+                if Game.gamemode == "Conquer":
+                    if Game.enemy_ships == 0 and Game.enemy_islands == 0:
+                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You won the level!", fontsize=30, color=Game.player_color)
+                        self.end_gametime = self.playtime + 5
+                        self.newlevel = True
+                    elif Game.player_ships == 0 and Game.player_islands == 0:
+                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=30, color=random.choice(Game.enemy_color))
+                        self.end_gametime = self.playtime + 5
+                        self.end_game == True
+                #elif Game.gamemode == "Defend":
+                    
+                
             # ------------------ click on island ---------------
             left,middle,right = pygame.mouse.get_pressed()
             if oldleft and not left:
