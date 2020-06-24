@@ -7,41 +7,6 @@ download: from Github/Islandwar
 idea: python3/pygame game, coordinating ship attacks
 """
 
-
-
-"""
-Tutorial 1,2 gut,
-Tutorial 3: Inseln besser kennzeichnen, Schrift mit Pfeil/ Dauerhafte Symbole auf den Inseln?
-
-Klicken verbessern: Rechtsklick auswählen, Linksklick senden
-Nachricht an Spieler verbessern (Textfenster zu Beginn, Spieler drückt okay)
-Mehrspielrmodus
-
-
-Schwereskala: 1 leicht, 10 schwer:
-Tutorial 5: Zu schwer: 4/5, eventuell 2 Schiffe mehr für Spieler
-Level 1: Zu schwer: 5/6
-Level 2: Perfekt, Tausch mit 1?
-Level 3: Zu schwer: schwerer als Level 1
-Level 4: Angemessen
-Level 5: Gegner bringt sich selbst um (lenkt seine Schiffe auf überlegene Feinde)
-Level 6: Angemessen
-Level 7: Angemessen
-Level 8: 1 Schiff weniger für Gegner
-Level 9: In Ordnung
-Level 10: In Ordnung
-Level 11: Etwas schwer, weiter nach hinten
-Level 12: Perfekt
-Level 13: Einfach
-Level 14: Schwer, aber angemessen
-Level 15: Leichter als die davor
-Level 16: Viel zu einfach, in Entwicklung
-"""
-
-
-
-import this
-print("Praize!!!")
 import pygame
 import random
 import os
@@ -139,12 +104,14 @@ class Game():
     player_iron = 0
     player_ships = 0
     player_islands = 0
+    player_island_types = [0,0,0,0] #amount of [main,ship,wood,iron] islands of player
     enemy_ships = 0
     enemy_islands = 0
     enemy1_wood = 0
     enemy1_iron = 0
     enemy2_wood = 0
     enemy2_iron = 0
+    enemy_island_types = [0,0,0,0] #amount of [main,ship,wood,iron] islands of enemy
     wood_islandgroup = pygame.sprite.Group()
     iron_islandgroup = pygame.sprite.Group()
     ship_islandgroup = pygame.sprite.Group()
@@ -817,6 +784,7 @@ class Viewer(object):
         self.end_game = False
         self.newlevel = False
         self.end_gametime = 0
+        #self.time_to_draw = 0 #if there are no possible moves for a period of time, the game ends
         self.load_graphics()
         # ------ background images ------
         self.backgroundfilenames = [] # every .jpg file in folder 'data'
@@ -889,6 +857,45 @@ class Viewer(object):
             s.kill()
         for g in Game.groups:
             g.empty()
+            
+    def update_gamevariables(self):
+        """Updates the counter for islands and ships of player and enemies."""
+        Game.player_ships = 0
+        Game.player_islands = 0
+        Game.player_island_types = [0,0,0,0]
+        Game.enemy_ships = 0
+        Game.enemy_islands = 0
+        Game.enemy1_island_types = [0,0,0,0]
+        Game.enemy2_island_types = [0,0,0,0]
+        for i in Game.islandgroup:
+            if i.empire_color == Game.player_color:
+                Game.player_ships += i.ships
+                Game.player_islands += 1
+                if i.__class__.__name__ == "Main_Island":
+                    Game.player_island_types[0] += 1
+                elif i.__class__.__name__ == "Ship_Island":
+                    Game.player_island_types[1] += 1
+                elif i.__class__.__name__ == "Wood_Island":
+                    Game.player_island_types[2] += 1
+                elif i.__class__.__name__ == "Iron_Island":
+                    Game.player_island_types[3] += 1
+            elif i.empire_color in Game.enemy_color:
+                Game.enemy_ships += i.ships
+                Game.enemy_islands += 1
+                if i.__class__.__name__ == "Main_Island":
+                    Game.enemy_island_types[0] += 1
+                elif i.__class__.__name__ == "Ship_Island":
+                    Game.enemy_island_types[1] += 1
+                elif i.__class__.__name__ == "Wood_Island":
+                    Game.enemy_island_types[2] += 1
+                elif i.__class__.__name__ == "Iron_Island":
+                    Game.enemy_island_types[3] += 1
+        for s in self.shipgroup:
+            if s.empire_color == Game.player_color:
+                Game.player_ships += 1
+            elif s.empire_color in Game.enemy_color:
+                Game.enemy_ships += 1
+        
     
     def new_level(self):
         try: 
@@ -1205,25 +1212,8 @@ class Viewer(object):
                 for y, line in enumerate(lines):
                     write(self.screen, line, x=200, y=50+y*25)
 
+            self.update_gamevariables()
             # ------------------win or lose --------------------
-            
-            Game.player_ships = 0
-            Game.player_islands = 0
-            Game.enemy_ships = 0
-            Game.enemy_islands = 0
-            for i in Game.islandgroup:
-                if i.empire_color == Game.player_color:
-                    Game.player_ships += i.ships
-                    Game.player_islands += 1
-                elif i.empire_color in Game.enemy_color:
-                    Game.enemy_ships += i.ships
-                    Game.enemy_islands += 1
-            for s in self.shipgroup:
-                if s.empire_color == Game.player_color:
-                    Game.player_ships += 1
-                elif s.empire_color in Game.enemy_color:
-                    Game.enemy_ships += 1
-            
             if self.end_gametime < self.playtime:
                 if self.newlevel == True:
                     self.newlevel = False
@@ -1240,6 +1230,12 @@ class Viewer(object):
                         Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=30, color=random.choice(Game.enemy_color))
                         self.end_gametime = self.playtime + 5
                         self.end_game == True
+                    elif Game.player_ships == 0 and Game.enemy_ships == 0:
+                        if (Game.player_island_types[2] == 0 and Game.player_island_types[3] == 0) or Game.player_island_types[1] == 0:
+                            if (Game.enemy_island_types[2] == 0 and Game.enemy_island_types[3] == 0) or Game.enemy_island_types[1] == 0:
+                                Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "No one wins!", fontsize=30, color=(0,0,0))
+                                self.end_gametime = self.playtime + 5
+                                self.end_game == True
                 #elif Game.gamemode == "Defend":
                     
                 
