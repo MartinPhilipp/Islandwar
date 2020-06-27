@@ -6,7 +6,8 @@ license: gpl, see http://www.gnu.org/licenses/gpl-3.0.de.html
 download: from Github/Islandwar
 idea: python3/pygame game, coordinating ship attacks
 """
-
+import this
+print("Praize!!!")
 import pygame
 import random
 import os
@@ -1241,22 +1242,22 @@ class Viewer(object):
                 
             # ------------------ click on island ---------------
             left,middle,right = pygame.mouse.get_pressed()
+            if oldright and not right:
+                mouse_pos = pygame.mouse.get_pos()
+                for i in Game.islandgroup:
+                    dist = distance((i.pos[0],i.pos[1]), (mouse_pos[0],-mouse_pos[1]))
+                    if dist < i.size/2:
+                        self.island_selected = [i.pos[0],i.pos[1],i.size]
+                        break
+                    else:
+                        self.island_selected = []
+            # -------------- send ship ----------------
             if oldleft and not left:
                 mouse_pos = pygame.mouse.get_pos()
                 for i in Game.islandgroup:
                     dist = distance((i.pos[0],i.pos[1]), (mouse_pos[0],-mouse_pos[1]))
-                    #v = i.pos - pygame.math.Vector2(mouse_pos[0], mouse_pos[1])
-                    #dist = v.length
-                    if dist < i.size//2:
-                        #if self.click_indicator_time > self.playtime:
-                        if self.island_selected == []:
-                            self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
-                        elif (self.playtime - self.last_click) < 0.25:
-                            self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
-                        else:
-                            self.last_click = self.playtime
-                        # -------------- send ship ----------------
-                        if len(self.island_selected) != 0 and self.click_indicator_time < self.playtime: #Island selected?
+                    if dist < i.size/2:
+                        if len(self.island_selected) != 0: #Island selected?
                             for s in Game.islandgroup: #Which island is selected?
                                 if (self.island_selected[0],self.island_selected[1]) == s.pos:
                                     if distance((self.island_selected[0],self.island_selected[1]), i.pos) != 0: #is selected island != target island?
@@ -1270,16 +1271,8 @@ class Viewer(object):
                                                 e = pygame.math.Vector2(1,0)
                                                 angle = e.angle_to(m)
                                                 Ship(pos=pygame.math.Vector2(self.island_selected[0],self.island_selected[1])+start, destination=i.pos, move=move, angle=angle, empire_color=s.empire_color)
-                        #self.click_indicator_time = self.playtime + 0.25
-                        # ----------------- select island ---------------
-                        #else:
-                        #    self.click_indicator_time = self.playtime + 0.25
-                        break
-                else:
-                    #self.click_indicator_time = 0
-                    self.island_selected = []
+                                                break
             oldleft, oldmiddle, oldright = left, middle, right
-            
                 
             if self.island_selected:
                 pygame.draw.circle(self.screen, (100,100,100), (int(self.island_selected[0]),-int(self.island_selected[1])), self.island_selected[2]//2+25)
