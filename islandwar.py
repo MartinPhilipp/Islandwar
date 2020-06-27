@@ -1238,9 +1238,11 @@ class Viewer(object):
                         self.end_gametime = self.playtime + 5
                         self.newlevel = True
                     elif Game.player_ships == 0 and Game.player_islands == 0:
-                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=30, color=random.choice(Game.enemy_color))
+                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=70, color=random.choice(Game.enemy_color))
                         self.end_gametime = self.playtime + 5
-                        self.end_game == True
+                      #  self.end_game == True
+                        self.newlevel = True
+                        Game.level -= 1
                     elif Game.player_ships == 0 and Game.enemy_ships == 0:
                         if (Game.player_island_types[2] == 0 and Game.player_island_types[3] == 0) or Game.player_island_types[1] == 0:
                             if (Game.enemy_island_types[2] == 0 and Game.enemy_island_types[3] == 0) or Game.enemy_island_types[1] == 0:
