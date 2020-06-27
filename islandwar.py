@@ -102,7 +102,9 @@ class Game():
     gamemodes = ["Conquer","Defend","Collect"]
     gamemode = "Conquer"
     player_wood = 0
+    player_wood_int = 0
     player_iron = 0
+    player_iron_int = 0
     player_ships = 0
     player_islands = 0
     player_island_types = [0,0,0,0] #amount of [main,ship,wood,iron] islands of player
@@ -515,6 +517,9 @@ class Wood_Island(Island):
         Island.update(self, seconds)
         if self.empire_color == Game.player_color:
             Game.player_wood += 0.3 * seconds * Game.speed
+            if Game.player_wood >= Game.player_wood_int +1:
+                Game.player_wood_int +=1
+                Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Wood", color=(254, 254, 254), dy=-10)
         elif self.empire_color == Game.enemy_color[0]:
             Game.enemy1_wood += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[1]:
@@ -560,6 +565,9 @@ class Iron_Island(Island):
         Island.update(self, seconds)
         if self.empire_color == Game.player_color:
             Game.player_iron += 0.3 * seconds * Game.speed
+            if Game.player_iron >= Game.player_iron_int +1:
+                Game.player_iron_int +=1
+                Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Iron", color=(254, 254, 254), dy=-10)
         elif self.empire_color == Game.enemy_color[0]:
             Game.enemy1_iron += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[1]:
@@ -606,7 +614,9 @@ class Ship_Island(Island):
         if self.empire_color == Game.player_color:
             if Game.player_iron >= 5 and Game.player_wood >= 5:
                 Game.player_iron -= 5
+                Game.player_iron_int -= 5
                 Game.player_wood -= 5
+                Game.player_wood_int -= 5 
                 ship_islands = []
                 for i in Game.ship_islandgroup: 
                     if i.empire_color == Game.player_color:
@@ -1185,8 +1195,8 @@ class Viewer(object):
             # write text below sprites
             write(self.screen, "FPS: {:8.3}".format(
                 self.clock.get_fps() ), x=10, y=10)
-            write(self.screen, "Wood = {:.0f}".format(Game.player_wood), x=10,y=30)
-            write(self.screen, "Iron = {:.0f}".format(Game.player_iron), x=10,y=50)
+            write(self.screen, "Wood = {}".format(Game.player_wood_int), x=10,y=30)
+            write(self.screen, "Iron = {}".format(Game.player_iron_int), x=10,y=50)
             write(self.screen, "Ships = {:.0f}".format(Game.player_ships), x=10,y=80)
             level = Game.level
             if level <= 0:
@@ -1227,9 +1237,11 @@ class Viewer(object):
                         self.end_gametime = self.playtime + 5
                         self.newlevel = True
                     elif Game.player_ships == 0 and Game.player_islands == 0:
-                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=30, color=random.choice(Game.enemy_color))
+                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=70, color=random.choice(Game.enemy_color))
                         self.end_gametime = self.playtime + 5
-                        self.end_game == True
+                      #  self.end_game == True
+                        self.newlevel = True
+                        Game.level -= 1
                     elif Game.player_ships == 0 and Game.enemy_ships == 0:
                         if (Game.player_island_types[2] == 0 and Game.player_island_types[3] == 0) or Game.player_island_types[1] == 0:
                             if (Game.enemy_island_types[2] == 0 and Game.enemy_island_types[3] == 0) or Game.enemy_island_types[1] == 0:
