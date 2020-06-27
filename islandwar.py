@@ -6,14 +6,15 @@ license: gpl, see http://www.gnu.org/licenses/gpl-3.0.de.html
 download: from Github/Islandwar
 idea: python3/pygame game, coordinating ship attacks
 """
-
+import this
+print("Praize!!!")
 import pygame
 import random
 import os
 import time
 import math
-import Islandwar_levels as Levels
-import Islandwar_menu as Menu
+import islandwar_levels as Levels
+import islandwar_menu as Menu
 
 def structurize_text(text, linelength):
     """returns a list containing strings with the split up text with less or equal chars than the linelength"""
@@ -101,7 +102,9 @@ class Game():
     gamemodes = ["Conquer","Defend","Collect"]
     gamemode = "Conquer"
     player_wood = 0
+    player_wood_int = 0
     player_iron = 0
+    player_iron_int = 0
     player_ships = 0
     player_islands = 0
     player_island_types = [0,0,0,0] #amount of [main,ship,wood,iron] islands of player
@@ -514,6 +517,9 @@ class Wood_Island(Island):
         Island.update(self, seconds)
         if self.empire_color == Game.player_color:
             Game.player_wood += 0.3 * seconds * Game.speed
+            if Game.player_wood >= Game.player_wood_int +1:
+                Game.player_wood_int +=1
+                Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Wood", color=(254, 254, 254), dy=-10)
         elif self.empire_color == Game.enemy_color[0]:
             Game.enemy1_wood += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[1]:
@@ -559,6 +565,9 @@ class Iron_Island(Island):
         Island.update(self, seconds)
         if self.empire_color == Game.player_color:
             Game.player_iron += 0.3 * seconds * Game.speed
+            if Game.player_iron >= Game.player_iron_int +1:
+                Game.player_iron_int +=1
+                Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Iron", color=(254, 254, 254), dy=-10)
         elif self.empire_color == Game.enemy_color[0]:
             Game.enemy1_iron += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[1]:
@@ -605,7 +614,9 @@ class Ship_Island(Island):
         if self.empire_color == Game.player_color:
             if Game.player_iron >= 5 and Game.player_wood >= 5:
                 Game.player_iron -= 5
+                Game.player_iron_int -= 5
                 Game.player_wood -= 5
+                Game.player_wood_int -= 5 
                 ship_islands = []
                 for i in Game.ship_islandgroup: 
                     if i.empire_color == Game.player_color:
@@ -1186,8 +1197,8 @@ class Viewer(object):
             # write text below sprites
             write(self.screen, "FPS: {:8.3}".format(
                 self.clock.get_fps() ), x=10, y=10)
-            write(self.screen, "Wood = {:.0f}".format(Game.player_wood), x=10,y=30)
-            write(self.screen, "Iron = {:.0f}".format(Game.player_iron), x=10,y=50)
+            write(self.screen, "Wood = {}".format(Game.player_wood_int), x=10,y=30)
+            write(self.screen, "Iron = {}".format(Game.player_iron_int), x=10,y=50)
             write(self.screen, "Ships = {:.0f}".format(Game.player_ships), x=10,y=80)
             level = Game.level
             if level <= 0:
@@ -1241,22 +1252,22 @@ class Viewer(object):
                 
             # ------------------ click on island ---------------
             left,middle,right = pygame.mouse.get_pressed()
+            if oldright and not right:
+                mouse_pos = pygame.mouse.get_pos()
+                for i in Game.islandgroup:
+                    dist = distance((i.pos[0],i.pos[1]), (mouse_pos[0],-mouse_pos[1]))
+                    if dist < i.size/2:
+                        self.island_selected = [i.pos[0],i.pos[1],i.size]
+                        break
+                    else:
+                        self.island_selected = []
+            # -------------- send ship ----------------
             if oldleft and not left:
                 mouse_pos = pygame.mouse.get_pos()
                 for i in Game.islandgroup:
                     dist = distance((i.pos[0],i.pos[1]), (mouse_pos[0],-mouse_pos[1]))
-                    #v = i.pos - pygame.math.Vector2(mouse_pos[0], mouse_pos[1])
-                    #dist = v.length
-                    if dist < i.size//2:
-                        #if self.click_indicator_time > self.playtime:
-                        if self.island_selected == []:
-                            self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
-                        elif (self.playtime - self.last_click) < 0.25:
-                            self.island_selected = [i.pos[0],i.pos[1],i.size,i.ships]
-                        else:
-                            self.last_click = self.playtime
-                        # -------------- send ship ----------------
-                        if len(self.island_selected) != 0 and self.click_indicator_time < self.playtime: #Island selected?
+                    if dist < i.size/2:
+                        if len(self.island_selected) != 0: #Island selected?
                             for s in Game.islandgroup: #Which island is selected?
                                 if (self.island_selected[0],self.island_selected[1]) == s.pos:
                                     if distance((self.island_selected[0],self.island_selected[1]), i.pos) != 0: #is selected island != target island?
@@ -1270,16 +1281,8 @@ class Viewer(object):
                                                 e = pygame.math.Vector2(1,0)
                                                 angle = e.angle_to(m)
                                                 Ship(pos=pygame.math.Vector2(self.island_selected[0],self.island_selected[1])+start, destination=i.pos, move=move, angle=angle, empire_color=s.empire_color)
-                        #self.click_indicator_time = self.playtime + 0.25
-                        # ----------------- select island ---------------
-                        #else:
-                        #    self.click_indicator_time = self.playtime + 0.25
-                        break
-                else:
-                    #self.click_indicator_time = 0
-                    self.island_selected = []
+                                                break
             oldleft, oldmiddle, oldright = left, middle, right
-            
                 
             if self.island_selected:
                 pygame.draw.circle(self.screen, (100,100,100), (int(self.island_selected[0]),-int(self.island_selected[1])), self.island_selected[2]//2+25)
