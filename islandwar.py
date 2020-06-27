@@ -757,8 +757,6 @@ class Ship(VectorSprite):
                     self.move = self.move.rotate(1*Game.speed)
                 angle = pygame.math.Vector2(1,0).angle_to(self.move)
                 self.set_angle(angle)
-        
-
 
 class Viewer(object):
     width = 0
@@ -1194,6 +1192,7 @@ class Viewer(object):
             if level <= 0:
                 for l in Levels.levels.keys():
                     if int(l) <= 0:
+                        
                         level += 1
                 write(self.screen, "Tutorial {}".format(level), x=1280, y=30)
             else:
@@ -1237,8 +1236,13 @@ class Viewer(object):
                                 Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "No one wins!", fontsize=30, color=(0,0,0))
                                 self.end_gametime = self.playtime + 5
                                 self.end_game == True
-                #elif Game.gamemode == "Defend":
-                    
+                elif Game.gamemode == "Defend":
+                    print(Game.player_island_types[0])
+                    if Game.player_island_types[0] == 0:
+                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lost your island!", fontsize=30, color=random.choice(Game.enemy_color))
+                        self.end_gametime = self.playtime + 5
+                        self.end_game == True
+                #elif Game.gamemode == "Collect":
                 
             # ------------------ click on island ---------------
             left,middle,right = pygame.mouse.get_pressed()
