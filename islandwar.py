@@ -13,8 +13,8 @@ import random
 import os
 import time
 import math
-import Islandwar_levels as Levels
-import Islandwar_menu as Menu
+import islandwar_levels as Levels
+import islandwar_menu as Menu
 
 def structurize_text(text, linelength):
     """returns a list containing strings with the split up text with less or equal chars than the linelength"""
