@@ -485,15 +485,10 @@ class Wood_Island(Island):
     
     def __init__(self, **kwargs):
         Island.__init__(self, **kwargs)
-        #if "empire_color" not in kwargs:
-        #    self.empire_color = (0,255,0)
-        #if "ships" not in kwargs:
-        #    self.ships = 0
 
     def _overwrite_parameters(self):
         if self.size == None:
             self.size = 100 
-        #self.empire_color = (0,255,0)
 
     def create_image(self):
         self.image = pygame.Surface((self.size+20,self.size+20))
@@ -505,13 +500,6 @@ class Wood_Island(Island):
         self.image.set_colorkey((0,0,0))
         self.image0 = self.image.copy()
         self.rect = self.image.get_rect()
-        #self.image = pygame.Surface((self.size,self.size))
-        #pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
-        #pygame.draw.circle(self.image, (0,128,0), (self.size//2,self.size//2), self.size//2-5)
-        #write(self.image, "Wood production", x=5, y=40, fontsize=10, color=(1,1,1))
-        #self.image.set_colorkey((0,0,0))
-        #self.rect= self.image.get_rect()
-        #self.image0 = self.image.copy()
         
     def update(self, seconds):
         Island.update(self, seconds)
@@ -526,22 +514,15 @@ class Wood_Island(Island):
             Game.enemy2_wood += 0.3 * seconds * Game.speed
         else:
             pass
-        #write(self.image, "{}".format(self.ships), x=self.size-10, y=self.size-self.size//5,  fontsize=self.size//5, color=(255,0,0))
-        
+
 class Iron_Island(Island):
 
     def __init__(self, **kwargs):
         Island.__init__(self, **kwargs)
-        #if "empire_color" not in kwargs:
-        #    self.empire_color = (0,255,0)
-        #if "ships" not in kwargs:
-        #    self.ships = 0
     
     def _overwrite_parameters(self):
         if self.size == None:
             self.size = 100 
-        #self.ships = 5
-        #self.empire_color = (0,255,0)
 
     def create_image(self):
         self.image = pygame.Surface((self.size+20,self.size+20))
@@ -553,14 +534,7 @@ class Iron_Island(Island):
         self.image.set_colorkey((0,0,0))
         self.image0 = self.image.copy()
         self.rect = self.image.get_rect()
-        #self.image = pygame.Surface((self.size,self.size))
-        #pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
-        #pygame.draw.circle(self.image, (100,100,100), (self.size//2,self.size//2), self.size//2-5)
-        #write(self.image, "Iron production", x=5, y=40, fontsize=10, color=(1,1,1))
-        #self.image.set_colorkey((0,0,0))
-        #self.rect= self.image.get_rect()
-        #self.image0 = self.image.copy()
-        
+
     def update(self, seconds):
         Island.update(self, seconds)
         if self.empire_color == Game.player_color:
@@ -574,22 +548,15 @@ class Iron_Island(Island):
             Game.enemy2_iron += 0.3 * seconds * Game.speed
         else:
             pass
-        #write(self.image, "{}".format(self.ships), x=self.size-10, y=self.size-self.size//5,  fontsize=self.size//5, color=(255,0,0))
         
 class Ship_Island(Island):
 
     def __init__(self, **kwargs):
         Island.__init__(self, **kwargs)
-        #if "empire_color" not in kwargs:
-        #    self.empire_color = (0,255,0)
-        #if "ships" not in kwargs:
-        #    self.ships = 0
     
     def _overwrite_parameters(self):
         if self.size == None:
             self.size = 100 
-        #self.ships = 5
-        #self.empire_color = (0,255,0)
 
     def create_image(self):
         self.image = pygame.Surface((self.size+20,self.size+20))
@@ -601,13 +568,6 @@ class Ship_Island(Island):
         self.image.set_colorkey((0,0,0))
         self.image0 = self.image.copy()
         self.rect = self.image.get_rect()
-        #self.image = pygame.Surface((self.size,self.size))
-        #pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
-        #pygame.draw.circle(self.image, (140,100,20), (self.size//2,self.size//2), self.size//2-5)
-        #write(self.image, "Ship production", x=5, y=40, fontsize=10, color=(1,1,1))
-        #self.image.set_colorkey((0,0,0))
-        #self.rect= self.image.get_rect()
-        #self.image0 = self.image.copy()
         
     def update(self, seconds):
         Island.update(self, seconds)
@@ -647,18 +607,10 @@ class Main_Island(Island):
 
     def __init__(self, **kwargs):
         Island.__init__(self, **kwargs)
-        #if "empire_color" not in kwargs:
-        #    self.empire_color = (0,255,0)
-        #if "ships" not in kwargs:
-        #    self.ships = 0
-
     
     def _overwrite_parameters(self):
         if self.size == None:
             self.size = 200 
-        #self.size = 200
-        #self.ships = 5
-        #self.empire_color = (0,255,0)
     
     def create_image(self):
         self.image = pygame.Surface((self.size+20,self.size+20))
@@ -670,17 +622,9 @@ class Main_Island(Island):
         self.image.set_colorkey((0,0,0))
         self.image0 = self.image.copy()
         self.rect = self.image.get_rect()
-        #self.image = pygame.Surface((self.size,self.size))
-        #pygame.draw.circle(self.image, self.empire_color, (self.size//2,self.size//2), self.size//2)
-        #pygame.draw.circle(self.image, (30,200,30), (self.size//2,self.size//2), self.size//2-5)
-        #write(self.image, "Main Island", x=self.size//20, y=self.size//2, fontsize=self.size//10, color=(1,1,1))
-        #self.image.set_colorkey((0,0,0))
-        #self.rect= self.image.get_rect()
-        #self.image0 = self.image.copy()
     
     def update(self, seconds):
         Island.update(self, seconds)
-        #write(self.image, "{}".format(self.ships), x=self.size-30, y=self.size-self.size//5,  fontsize=self.size//5, color=(255,0,0))
         
 class Ship(VectorSprite):
     
@@ -693,8 +637,6 @@ class Ship(VectorSprite):
     
     def _overwrite_parameters(self):
         self.size = Game.ship_size
-        #self.empire_color = (0,255,0)
-        #self.destination = random.choice(Game.islands)
         
     def create_image(self):
         if self.empire_color == Game.player_color:
@@ -708,12 +650,6 @@ class Ship(VectorSprite):
             self.image = Viewer.images["ship"]
         self.image0 = self.image.copy()
         self.rect = self.image.get_rect()
-        #self.image = pygame.Surface(self.size)
-        #pygame.draw.rect(self.image, (self.empire_color), (0,0,self.size[0],self.size[1]), 0)
-        #pygame.draw.rect(self.image, (140,100,20), (5,2,self.size[0]-10,self.size[1]-4), 0)
-        #self.image.set_colorkey((0,0,0))
-        ##self.rect = self.image.get_rect()
-        #self.image0 = self.image.copy()
         
     def radar(self):
         """Checks if an island is on a given position"""
@@ -793,7 +729,6 @@ class Viewer(object):
         self.end_game = False
         self.newlevel = False
         self.end_gametime = 0
-        #self.time_to_draw = 0 #if there are no possible moves for a period of time, the game ends
         self.load_graphics()
         # ------ background images ------
         self.backgroundfilenames = [] # every .jpg file in folder 'data'
@@ -876,8 +811,8 @@ class Viewer(object):
         Game.player_island_types = [0,0,0,0]
         Game.enemy_ships = 0
         Game.enemy_islands = 0
-        Game.enemy1_island_types = [0,0,0,0]
-        Game.enemy2_island_types = [0,0,0,0]
+        Game.enemy_island_types = [0,0,0,0]
+        #Game.enemy2_island_types = [0,0,0,0]
         for i in Game.islandgroup:
             if i.empire_color == Game.player_color:
                 Game.player_ships += i.ships
@@ -905,8 +840,7 @@ class Viewer(object):
             if s.empire_color == Game.player_color:
                 Game.player_ships += 1
             elif s.empire_color in Game.enemy_color:
-                Game.enemy_ships += 1
-        
+                Game.enemy_ships += 1        
     
     def new_level(self):
         try: 
@@ -1003,7 +937,7 @@ class Viewer(object):
         self.menu = True
         while running:
             #pygame.mixer.music.pause()
-            milliseconds = self.clock.tick(self.fps) #
+            milliseconds = self.clock.tick(self.fps)
             seconds = milliseconds / 1000
             text = Menu.menu[Menu.name][Menu.cursor]
             # -------- events ------
@@ -1246,8 +1180,12 @@ class Viewer(object):
                         self.newlevel = True
                         Game.level -= 1
                     elif Game.player_ships == 0 and Game.enemy_ships == 0:
+                        print("No Ships!")
                         if (Game.player_island_types[2] == 0 and Game.player_wood < 5) or (Game.player_island_types[3] == 0 and Game.player_iron < 5) or Game.player_island_types[1] == 0:
+                            print("No resource island, no ships!")
+                            print(Game.enemy_island_types)
                             if (Game.enemy_island_types[2] == 0 and Game.enemy1_wood < 5) or (Game.enemy_island_types[3] == 0 and Game.enemy1_iron < 5) or Game.enemy_island_types[1] == 0:
+                                print("Enemy too!")
                                 Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "No one wins!", fontsize=30, color=(0,0,0))
                                 self.end_gametime = self.playtime + 5
                                 self.newlevel = True
@@ -1318,15 +1256,16 @@ class Viewer(object):
                                 i.rect.center=(int(i.pos.x), -int(i.pos.y))
                                 s.kill()
                     
-                            # ----------- clear, draw , update, flip -----------------
+            # ----------- clear, draw , update, flip -----------------
             self.allgroup.draw(self.screen)
+            
+            
             for i in Game.islandgroup:
                 if i.empire_color != Game.neutral_color:
                     write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(i.empire_color))
                 else:
                     if i.ships != 0:
                        write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(1,1,1))
-                 
                         
             # -------- next frame -------------
             pygame.display.flip()
