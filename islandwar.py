@@ -866,6 +866,8 @@ class Viewer(object):
             s.kill()
         for g in Game.groups:
             g.empty()
+        for f in self.flytextgroup:
+            f.kill()
             
     def update_gamevariables(self):
         """Updates the counter for islands and ships of player and enemies."""
@@ -920,7 +922,9 @@ class Viewer(object):
             return
 
         Game.player_iron = 0
+        Game.player_iron_int = 0
         Game.player_wood = 0
+        Game.player_wood_int = 0
         Game.enemy1_iron = 0
         Game.enemy1_wood = 0
         Game.enemy2_iron = 0
@@ -1239,15 +1243,15 @@ class Viewer(object):
                     elif Game.player_ships == 0 and Game.player_islands == 0:
                         Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=70, color=random.choice(Game.enemy_color))
                         self.end_gametime = self.playtime + 5
-                      #  self.end_game == True
                         self.newlevel = True
                         Game.level -= 1
                     elif Game.player_ships == 0 and Game.enemy_ships == 0:
-                        if (Game.player_island_types[2] == 0 and Game.player_island_types[3] == 0) or Game.player_island_types[1] == 0:
-                            if (Game.enemy_island_types[2] == 0 and Game.enemy_island_types[3] == 0) or Game.enemy_island_types[1] == 0:
+                        if (Game.player_island_types[2] == 0 and Game.player_wood < 5) or (Game.player_island_types[3] == 0 and Game.player_iron < 5) or Game.player_island_types[1] == 0:
+                            if (Game.enemy_island_types[2] == 0 and Game.enemy1_wood < 5) or (Game.enemy_island_types[3] == 0 and Game.enemy1_iron < 5) or Game.enemy_island_types[1] == 0:
                                 Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "No one wins!", fontsize=30, color=(0,0,0))
                                 self.end_gametime = self.playtime + 5
-                                self.end_game == True
+                                self.newlevel = True
+                                Game.level -= 1
                 elif Game.gamemode == "Defend":
                     print(Game.player_island_types[0])
                     if Game.player_island_types[0] == 0:
