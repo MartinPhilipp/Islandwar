@@ -11,13 +11,14 @@ print("Praize!!!")
 import pygame
 import random
 import os
+import sys
 import time
 import math
 import islandwar_levels as Levels
 import islandwar_menu as Menu
 
 def structurize_text(text, linelength):
-    """returns a list containing strings with the split up text with less or equal chars than the linelength"""
+    """returns a list containing strings with the split up textstring with less or equal chars than the linelength"""
     struct_text = []
     textline = ""
     words = text.split()
@@ -29,6 +30,11 @@ def structurize_text(text, linelength):
             textline = "" + word + " "
     struct_text.append(textline)
     return struct_text
+    
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS2', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
 
 def make_text(msg="pygame is cool", fontcolor=(255, 0, 255), fontsize=42, font="mono"):
     """returns pygame surface with text. You still need to blit the surface."""
@@ -90,6 +96,7 @@ def elastic_collision(sprite1, sprite2):
 class Game():
     quit_game = False
     difficulty = 0
+    graphic = "J" #either "J" or "I" for different designs
     speed = 1
     level = 1
     ship_size = (50,20) #with pygame graphics: 50,10
@@ -788,11 +795,14 @@ class Viewer(object):
         Viewer.images["ship"] = pygame.image.load(os.path.join("data", "Ship.png")).convert_alpha()
         Viewer.images["player_ship"] = pygame.image.load(os.path.join("data", "player_ship.png")).convert_alpha()
         Viewer.images["red_empire_ship"] = pygame.image.load(os.path.join("data", "red_empire_ship.png")).convert_alpha()
-        Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
-        #Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (200, 200))
         Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
         Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
         Viewer.images["ship_island"] = pygame.image.load(os.path.join("data", "ship_island.png")).convert_alpha()
+        if Game.graphic == "I":
+            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
+        else:
+            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
+        #Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (200, 200))
         
     def clean_up(self):
         for i in Game.islandgroup:
@@ -982,6 +992,15 @@ class Viewer(object):
                                 Viewer.height = y
                                 self.set_screenresolution()
                                 self.prepare_sprites()
+                        elif Menu.name == "Graphics":
+                            if text == "Ines' design":
+                                Game.graphic = "I"
+                                self.load_graphics()
+                                self.new_level()
+                            elif text == "Julia's design":
+                                Game.graphic = "J"
+                                self.load_graphics()
+                                self.new_level()
                         elif Menu.name == "Game speed":
                             if text == "Slow":
                                 Game.speed = 0.5
