@@ -9,13 +9,12 @@ menu = {"main":       ["Play", "Tutorial", "Levels", "Campaign", "Help", "Credit
         "Campaign":   ["back", "Mission 1", "Mission 2", "Mission 3", "Mission 4", "Mission 5"],
         "Help":       ["back", "Main island", "Wood island", "Iron island", "Ship island",],
         "Credits":    ["back", "Ines Schnabl", "Martin Schnabl", "Julia Steger","Marcel Korinek"],
-        "Settings":   ["back", "Game speed", "Screenresolution", "Fullscreen"],
+        "Settings":   ["back", "Game speed", "Screenresolution", "Fullscreen", "Graphics"],
+        "Graphics":   ["back", "Ines' design", "Julia's design"],
         "Resolution": ["back"],
         "Fullscreen": ["back", "True", "False"],
         "Game speed": ["back", "Slow", "Normal", "Fast", "Really fast"]
         }
-            
-            
             
 descr = {"Resume"        :"Resume to the game",
          "Martin Schnabl":"The programmer of this game.",
@@ -33,7 +32,8 @@ descr = {"Resume"        :"Resume to the game",
          "Wood island"   :"If you capture this island, you will earn wood every second.",
          "Iron island"   :"If you capture this island, you will earn iron every second.",
          "Ship island"   :"On this island there is a shipyard that will produce a new ship whenever you have 5 pieces of wood and 5 ingots of iron.",
-         "Campaign"      :"Not yet written. If you are good at storywriting, please contact us!"
+         "Campaign"      :"Not yet written. If you are good at storywriting, please contact us!",
+         "Graphics"      :"Change the style of the game.",
          }
 
 menu_images = {"Main island" : "main_island",
