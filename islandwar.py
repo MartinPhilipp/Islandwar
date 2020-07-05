@@ -912,18 +912,18 @@ class Viewer(object):
         Viewer.images["player_ship"] = pygame.image.load(os.path.join("data", "player_ship.png")).convert_alpha()
         Viewer.images["red_empire_ship"] = pygame.image.load(os.path.join("data", "red_empire_ship.png")).convert_alpha()
         Viewer.images["ship_island"] = pygame.image.load(os.path.join("data", "ship_island.png")).convert_alpha()
-        if Game.graphic == "I":
-            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
-            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
-            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
-        elif Game.graphic == "J":
-            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
-            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island2.png")).convert_alpha()
-            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island2.png")).convert_alpha()
-        elif Game.graphic == "J2":
-            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
-            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island3.png")).convert_alpha()
-            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island3.png")).convert_alpha()
+        #if Game.graphic == "I":
+        Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
+        Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
+        Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
+        #elif Game.graphic == "J":
+        #    Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
+        #    Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island2.png")).convert_alpha()
+        #    Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island2.png")).convert_alpha()
+        #elif Game.graphic == "J2":
+        #    Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
+        #    Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island3.png")).convert_alpha()
+        #    Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island3.png")).convert_alpha()
         #Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (200, 200))
         
     def clean_up(self):
@@ -1086,6 +1086,8 @@ class Viewer(object):
             #pygame.mixer.music.pause()
             milliseconds = self.clock.tick(self.fps)
             seconds = milliseconds / 1000
+            print(settings)
+            print("--------------------------------------")
             text = settings[Menu.name][Menu.cursor]
             # -------- events ------
             for event in pygame.event.get():
@@ -1105,7 +1107,7 @@ class Viewer(object):
                         Menu.cursor = min(len(settings[Menu.name])-1,Menu.cursor) # not > menu entries
                         #Viewer.menusound.play()
                     if event.key == pygame.K_RETURN:
-                        if text == "End the game" or text == ":
+                        if text == "End the game" or text == "Beenden":
                             Game.quit_game = True
                             running = False
                         elif text in settings:
@@ -1115,11 +1117,26 @@ class Viewer(object):
                             Menu.cursor = 0
                         elif text == "Play":
                             running = False
-                        elif text == "back" or text == "Zurück":
+                        elif text == "back" or text == "zurück":
                             Menu.history = Menu.history[:-1] # remove last entry
                             Menu.cursor = 0
                             Menu.name = Menu.history[-1] # get last entry
-                        elif Menu.name == "Screenresolution":
+                        elif Menu.name == "Language" or Menu.name == "Sprache":
+                            if text == "German" or text == "Deutsch":
+                                Game.language = "German"
+                                Menu.history = ["main"]
+                                Menu.cursor = 0
+                                Menu.name = "main"
+                                self.menu_run()
+                                return
+                            elif text == "English" or text == "Englisch":   
+                                Game.language = "English"
+                                Menu.history = ["main"]
+                                Menu.cursor = 0
+                                Menu.name = "main"
+                                self.menu_run()
+                                return
+                        elif Menu.name == "Screenresolution" or Menu.name == "Auflösung":
                             # text is something like 800x600
                             t = text.find("x")
                             if t != -1:
@@ -1129,7 +1146,7 @@ class Viewer(object):
                                 Viewer.height = y
                                 self.set_screenresolution()
                                 self.prepare_sprites()
-                        elif Menu.name == "Graphics":
+                        elif Menu.name == "Graphics" or Menu.name == "Grafik":
                             if text == "Ines' design":
                                 Game.graphic = "I"
                                 self.load_graphics()
@@ -1142,14 +1159,14 @@ class Viewer(object):
                                 Game.graphic = "J2"
                                 self.load_graphics()
                                 self.new_level()
-                        elif Menu.name == "Game speed":
-                            if text == "Slow":
+                        elif Menu.name == "Game speed" or Menu.name == "Spiel Geschwindigkeit":
+                            if text == "Slow" or text == "Langsam":
                                 Game.speed = 0.5
                             elif text == "Normal":
                                 Game.speed = 1
-                            elif text == "Fast":
+                            elif text == "Fast" or text == "Schnell":
                                 Game.speed = 3
-                            elif text == "Really fast":
+                            elif text == "Really fast" or text == "Sehr Schnell":
                                 Game.speed = 5
                         elif Menu.name[0:6] == "Level ":
                             if text[6:] in Levels.levels.keys():
@@ -1169,11 +1186,11 @@ class Viewer(object):
                             self.new_level()
                             running = False
                         elif Menu.name == "Fullscreen":
-                            if text == "True":
+                            if text == "True" or text == "Ja":
                                 #Viewer.menucommandsound.play()
                                 Viewer.fullscreen = True
                                 self.set_screenresolution()
-                            elif text == "False":
+                            elif text == "False" or text == "Nein":
                                 #Viewer.menucommandsound.play()
                                 Viewer.fullscreen = False
                                 self.set_screenresolution()
