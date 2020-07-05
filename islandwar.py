@@ -96,7 +96,8 @@ def elastic_collision(sprite1, sprite2):
 class Game():
     quit_game = False
     difficulty = 0
-    graphic = "J" #either "J" or "I" for different designs
+    language = "English"
+    graphic = "J" #either "J", "J2" or "I" for different designs
     speed = 1
     level = 1
     ship_size = (50,20) #with pygame graphics: 50,10
@@ -361,6 +362,120 @@ class VectorSprite(pygame.sprite.Sprite):
                 self.move.y *= -1
             elif self.warp_on_edge:
                 self.pos.y = 0
+
+class Mouse(pygame.sprite.Sprite):
+    def __init__(self, radius = 50, color=(255,0,0), x=320, y=240,
+                    startx=100,starty=100, control="mouse", ):
+        """create a (black) surface and paint a blue Mouse on it"""
+        self._layer=10
+        pygame.sprite.Sprite.__init__(self,self.groups)
+        self.radius = radius
+        self.color = color
+        self.startx = startx
+        self.starty = starty
+        self.x = x
+        self.y = y
+        self.dx = 0
+        self.dy = 0
+        self.r = color[0]
+        self.g = color[1]
+        self.b = color[2]
+        self.delta = -10
+        self.age = 0
+        self.pos = pygame.mouse.get_pos()
+        self.move = 0
+        self.tail=[]
+        self.create_image()
+        self.rect = self.image.get_rect()
+        self.control = control # "mouse" "keyboard1" "keyboard2"
+        self.pushed = False
+
+    def create_image(self):
+
+        self.image = pygame.surface.Surface((self.radius*0.5, self.radius*0.5))
+        delta1 = 12.5
+        delta2 = 25
+        w = self.radius*0.5 / 100.0
+        h = self.radius*0.5 / 100.0
+        # pointing down / up
+        for y in (0,2,4):
+            pygame.draw.line(self.image,(self.r-delta2,self.g,self.b),
+                         (35*w,0+y),(50*w,15*h+y),2)
+            pygame.draw.line(self.image,(self.r-delta2,self.g,self.b),
+                         (50*w,15*h+y),(65*w,0+y),2)
+            pygame.draw.line(self.image,(self.r-delta2,self.g,self.b),
+                         (35*w,100*h-y),(50*w,85*h-y),2)
+            pygame.draw.line(self.image,(self.r-delta2,self.g,self.b),
+                         (50*w,85*h-y),(65*w,100*h-y),2)
+        # pointing right / left                 
+        for x in (0,2,4):
+            pygame.draw.line(self.image,(self.r-delta2,self.g,self.b),
+                         (0+x,35*h),(15*w+x,50*h),2)
+            pygame.draw.line(self.image,(self.r-delta2,self.g,self.b),
+                         (15*w+x,50*h),(0+x,65*h),2)
+            
+            pygame.draw.line(self.image,(self.r-delta2,self.g,self.b),
+                         (100*w-x,35*h),(85*w-x,50*h),2)
+            pygame.draw.line(self.image,(self.r-delta2,self.g,self.b),
+                         (85*w-x,50*h),(100*w-x,65*h),2)
+        self.image.set_colorkey((0,0,0))
+        self.rect=self.image.get_rect()
+        self.rect.center = self.x, self.y
+
+    def update(self, seconds):
+        if self.control == "mouse":
+            self.x, self.y = pygame.mouse.get_pos()
+        elif self.control == "keyboard1":
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_LSHIFT]:
+                delta = 2
+            else:
+                delta = 9
+            if pressed[pygame.K_w]:
+                self.y -= delta
+            if pressed[pygame.K_s]:
+                self.y += delta
+            if pressed[pygame.K_a]:
+                self.x -= delta
+            if pressed[pygame.K_d]:
+                self.x += delta
+        elif self.control == "keyboard2":
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_RSHIFT]:
+                delta = 2
+            else:
+                delta = 9
+            if pressed[pygame.K_UP]:
+                self.y -= delta
+            if pressed[pygame.K_DOWN]:
+                self.y += delta
+            if pressed[pygame.K_LEFT]:
+                self.x -= delta
+            if pressed[pygame.K_RIGHT]:
+                self.x += delta
+        elif self.control == "joystick1":
+            pass
+        elif self.control == "joystick2":
+            pass
+        if self.x < 0:
+            self.x = 0
+        elif self.x > Viewer.width:
+            self.x = Viewer.width
+        if self.y < 0:
+            self.y = 0
+        elif self.y > Viewer.height:
+            self.y = Viewer.height
+        self.tail.insert(0,(self.x,self.y))
+        self.tail = self.tail[:128]
+        self.rect.center = self.x, self.y
+        self.r += self.delta   # self.r can take the values from 255 to 101
+        if self.r < 151:
+            self.r = 151
+            self.delta = 10
+        if self.r > 255:
+            self.r = 255
+            self.delta = -10
+        self.create_image()
 
 class Island(VectorSprite):
     def __init__(self, **kwargs):
@@ -763,7 +878,8 @@ class Viewer(object):
             x = pair[1:comma]
             y = pair[comma+2:-1]
             li.append(str(x)+"x"+str(y))
-        Menu.menu["Screenresolution"] = li
+        Menu.menu_e["Screenresolution"] = li
+        Menu.menu_d["Screenresolution"] = li
         self.set_screenresolution()
 
     def loadbackground(self):
@@ -795,13 +911,19 @@ class Viewer(object):
         Viewer.images["ship"] = pygame.image.load(os.path.join("data", "Ship.png")).convert_alpha()
         Viewer.images["player_ship"] = pygame.image.load(os.path.join("data", "player_ship.png")).convert_alpha()
         Viewer.images["red_empire_ship"] = pygame.image.load(os.path.join("data", "red_empire_ship.png")).convert_alpha()
-        Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
-        Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
         Viewer.images["ship_island"] = pygame.image.load(os.path.join("data", "ship_island.png")).convert_alpha()
         if Game.graphic == "I":
             Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
-        else:
+            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
+            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
+        elif Game.graphic == "J":
             Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
+            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island2.png")).convert_alpha()
+            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island2.png")).convert_alpha()
+        elif Game.graphic == "J2":
+            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
+            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island3.png")).convert_alpha()
+            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island3.png")).convert_alpha()
         #Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (200, 200))
         
     def clean_up(self):
@@ -937,6 +1059,15 @@ class Viewer(object):
         Iron_Island.groups = self.allgroup, Game.islandgroup, Game.iron_islandgroup
         Ship_Island.groups = self.allgroup, Game.islandgroup, Game.ship_islandgroup, Game.nonresource_islandgroup
         Main_Island.groups = self.allgroup, Game.islandgroup, Game.main_islandgroup, Game.nonresource_islandgroup
+        Mouse.groups = self.allgroup
+        
+        
+        # ------ player1,2,3: mouse, keyboard, joystick ---
+        #self.mouse1 = Mouse(control="mouse", color=(255,0,0))
+        #self.mouse2 = Mouse(control='keyboard1', color=(255,255,0))
+        #self.mouse3 = Mouse(control="keyboard2", color=(255,0,255))
+        #self.mouse4 = Mouse(control="joystick1", color=(255,128,255))
+        #self.mouse5 = Mouse(control="joystick2", color=(255,255,255))
         
         self.new_level()
 
@@ -946,10 +1077,16 @@ class Viewer(object):
         #pygame.mouse.set_visible(False)
         self.menu = True
         while running:
+            if Game.language == "English":
+                settings = Menu.menu_e
+                descr = Menu.descr_e
+            elif Game.language == "German":
+                settings = Menu.menu_d
+                descr = Menu.descr_d
             #pygame.mixer.music.pause()
             milliseconds = self.clock.tick(self.fps)
             seconds = milliseconds / 1000
-            text = Menu.menu[Menu.name][Menu.cursor]
+            text = settings[Menu.name][Menu.cursor]
             # -------- events ------
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -965,20 +1102,20 @@ class Viewer(object):
                         #Viewer.menusound.play()
                     if event.key == pygame.K_DOWN:
                         Menu.cursor += 1
-                        Menu.cursor = min(len(Menu.menu[Menu.name])-1,Menu.cursor) # not > menu entries
+                        Menu.cursor = min(len(settings[Menu.name])-1,Menu.cursor) # not > menu entries
                         #Viewer.menusound.play()
                     if event.key == pygame.K_RETURN:
-                        if text == "End the game":
+                        if text == "End the game" or text == ":
                             Game.quit_game = True
                             running = False
-                        elif text in Menu.menu:
+                        elif text in settings:
                             # changing to another menu
                             Menu.history.append(text) 
                             Menu.name = text
                             Menu.cursor = 0
                         elif text == "Play":
                             running = False
-                        elif text == "back":
+                        elif text == "back" or text == "Zurück":
                             Menu.history = Menu.history[:-1] # remove last entry
                             Menu.cursor = 0
                             Menu.name = Menu.history[-1] # get last entry
@@ -999,6 +1136,10 @@ class Viewer(object):
                                 self.new_level()
                             elif text == "Julia's design":
                                 Game.graphic = "J"
+                                self.load_graphics()
+                                self.new_level()
+                            elif text == "Julia's design 2":
+                                Game.graphic = "J2"
                                 self.load_graphics()
                                 self.new_level()
                         elif Menu.name == "Game speed":
@@ -1037,7 +1178,6 @@ class Viewer(object):
                                 Viewer.fullscreen = False
                                 self.set_screenresolution()
                             
-                        
             # ------delete everything on screen-------
             self.screen.blit(self.background, (0, 0))
             
@@ -1070,14 +1210,14 @@ class Viewer(object):
                 t+=(i)
             write(self.screen, text=t, x=200,y=70,color=(0,255,255), fontsize=15)
             # --- menu items ---
-            menu = Menu.menu[Menu.name]
+            menu = settings[Menu.name]
             for y, item in enumerate(menu):
                 write(self.screen, text=item, x=Viewer.width//2-500, y=100+y*50, color=(255,255,255), fontsize=30)
             # --- cursor ---
             write(self.screen, text="-->", x=Viewer.width//2-600, y=100+ Menu.cursor * 50, color=(0,0,0), fontsize=30)
             # ---- descr ------
-            if text in Menu.descr:
-                lines = structurize_text(Menu.descr[text], Menu.linelength)
+            if text in descr:
+                lines = structurize_text(descr[text], Menu.linelength)
                 for y, line in enumerate(lines):
                     write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
             elif text[0:6] == "Level ":
@@ -1164,13 +1304,7 @@ class Viewer(object):
                 write(self.screen, "Tutorial {}".format(level), x=1280, y=30)
             else:
                 write(self.screen, "Level {}".format(level), x=1280, y=30)
-            
-            #for i in Game.islandgroup:--------------------------------------------------------------------------------------------------------------------
-            #    if i.color != Game.neutral_color:
-            #        write(self.screen, "{}".format(i.ships), x=i.pos[0], y=-i.pos[1],  fontsize=i.size//5, color=(255,0,0))
-            #    else:
-            #        if i.ships != 0:
-            #            write(self.screen, "{}".format(i.ships), x=i.pos[0], y=-i.pos[1],  fontsize=i.size//5, color=(255,0,0))
+
             self.allgroup.update(seconds)
             
             # -------------- write explanations for the current level on the screen ------------------
@@ -1199,7 +1333,6 @@ class Viewer(object):
                         self.newlevel = True
                         Game.level -= 1
                     elif Game.player_ships == 0 and Game.enemy_ships == 0:
-                        print("No Ships!")
                         if (Game.player_island_types[2] == 0 and Game.player_wood < 5) or (Game.player_island_types[3] == 0 and Game.player_iron < 5) or Game.player_island_types[1] == 0:
                             print("No resource island, no ships!")
                             print(Game.enemy_island_types)
@@ -1277,7 +1410,6 @@ class Viewer(object):
                     
             # ----------- clear, draw , update, flip -----------------
             self.allgroup.draw(self.screen)
-            
             
             for i in Game.islandgroup:
                 if i.empire_color != Game.neutral_color:
