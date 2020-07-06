@@ -870,16 +870,18 @@ class Viewer(object):
         self.prepare_sprites()
         self.loadbackground()
         # --- create screen resolution list ---
-        li = ["back"]
+        li_e = ["back"]
+        li_d = ["zurück"]
         for i in pygame.display.list_modes():
             # li is something like "(800, 600)"
             pair = str(i)
             comma = pair.find(",")
             x = pair[1:comma]
             y = pair[comma+2:-1]
-            li.append(str(x)+"x"+str(y))
-        Menu.menu_e["Screenresolution"] = li
-        Menu.menu_d["Screenresolution"] = li
+            li_e.append(str(x)+"x"+str(y))
+            li_d.append(str(x)+"x"+str(y))
+        Menu.menu_e["Screenresolution"] = li_e
+        Menu.menu_d["Auflösung"] = li_d
         self.set_screenresolution()
 
     def loadbackground(self):
@@ -912,19 +914,19 @@ class Viewer(object):
         Viewer.images["player_ship"] = pygame.image.load(os.path.join("data", "player_ship.png")).convert_alpha()
         Viewer.images["red_empire_ship"] = pygame.image.load(os.path.join("data", "red_empire_ship.png")).convert_alpha()
         Viewer.images["ship_island"] = pygame.image.load(os.path.join("data", "ship_island.png")).convert_alpha()
-        #if Game.graphic == "I":
-        Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
-        Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
-        Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
-        #elif Game.graphic == "J":
-        #    Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
-        #    Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island2.png")).convert_alpha()
-        #    Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island2.png")).convert_alpha()
-        #elif Game.graphic == "J2":
-        #    Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
-        #    Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island3.png")).convert_alpha()
-        #    Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island3.png")).convert_alpha()
-        #Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (200, 200))
+        if Game.graphic == "I":
+            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
+            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
+            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
+        elif Game.graphic == "J":
+            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
+            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island2.png")).convert_alpha()
+            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island2.png")).convert_alpha()
+        elif Game.graphic == "J2":
+            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
+            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island3.png")).convert_alpha()
+            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island3.png")).convert_alpha()
+        Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (200, 200))
         
     def clean_up(self):
         for i in Game.islandgroup:
@@ -1086,8 +1088,6 @@ class Viewer(object):
             #pygame.mixer.music.pause()
             milliseconds = self.clock.tick(self.fps)
             seconds = milliseconds / 1000
-            print(settings)
-            print("--------------------------------------")
             text = settings[Menu.name][Menu.cursor]
             # -------- events ------
             for event in pygame.event.get():
@@ -1147,26 +1147,26 @@ class Viewer(object):
                                 self.set_screenresolution()
                                 self.prepare_sprites()
                         elif Menu.name == "Graphics" or Menu.name == "Grafik":
-                            if text == "Ines' design":
+                            if text == "Ines' design" or text == "Ines Entwurf":
                                 Game.graphic = "I"
                                 self.load_graphics()
                                 self.new_level()
-                            elif text == "Julia's design":
+                            elif text == "Julia's design" or text == "Julias Entwurf":
                                 Game.graphic = "J"
                                 self.load_graphics()
                                 self.new_level()
-                            elif text == "Julia's design 2":
+                            elif text == "Julia's design 2" or text == "Julias 2.Entwurf":
                                 Game.graphic = "J2"
                                 self.load_graphics()
                                 self.new_level()
-                        elif Menu.name == "Game speed" or Menu.name == "Spiel Geschwindigkeit":
+                        elif Menu.name == "Game speed" or Menu.name == "Geschwindigkeit":
                             if text == "Slow" or text == "Langsam":
                                 Game.speed = 0.5
                             elif text == "Normal":
                                 Game.speed = 1
                             elif text == "Fast" or text == "Schnell":
                                 Game.speed = 3
-                            elif text == "Really fast" or text == "Sehr Schnell":
+                            elif text == "Really fast" or text == "Sehr schnell":
                                 Game.speed = 5
                         elif Menu.name[0:6] == "Level ":
                             if text[6:] in Levels.levels.keys():
@@ -1185,7 +1185,7 @@ class Viewer(object):
                             Game.level = (int(text[9:]))-t
                             self.new_level()
                             running = False
-                        elif Menu.name == "Fullscreen":
+                        elif Menu.name == "Fullscreen" or "Vollbildschirm":
                             if text == "True" or text == "Ja":
                                 #Viewer.menucommandsound.play()
                                 Viewer.fullscreen = True
@@ -1210,9 +1210,9 @@ class Viewer(object):
                     if i.ships != 0:
                        write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(1,1,1))
             
-            pygame.draw.rect(self.screen,(170,170,170),(200,90,350,400))
-            pygame.draw.rect(self.screen,(200,200,200),(600,90,350,400))
-            pygame.draw.rect(self.screen,(230,230,230),(1000,90,350,400))
+            pygame.draw.rect(self.screen,(170,170,170),(200,90,350,450))
+            pygame.draw.rect(self.screen,(200,200,200),(600,90,350,450))
+            pygame.draw.rect(self.screen,(230,230,230),(1000,90,350,450))
             
             self.flytextgroup.draw(self.screen)
 
