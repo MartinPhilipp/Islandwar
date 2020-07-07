@@ -94,13 +94,15 @@ def elastic_collision(sprite1, sprite2):
                 sprite1.move.y -= 2 * diry * cdp
 
 class Game():
+    """This class is used to store all game related variables"""
     quit_game = False
     difficulty = 0
-    language = "English"
+    language = "English" #"English" or "German"
     graphic = "J" #either "J", "J2" or "I" for different designs
-    speed = 1
+    speed = 1  #Speed of the game
     level = 1
-    ship_size = (50,20) #with pygame graphics: 50,10
+    player = 1  #Amount of players
+    ship_size = (50,20) #default ship size
     for l in Levels.levels.keys():
         if int(l) <= 0:
             level -= 1 #for every tutorial level we go one level below 0
@@ -123,6 +125,7 @@ class Game():
     enemy2_wood = 0
     enemy2_iron = 0
     enemy_island_types = [0,0,0,0] #amount of [main,ship,wood,iron] islands of enemy
+    
     wood_islandgroup = pygame.sprite.Group()
     iron_islandgroup = pygame.sprite.Group()
     ship_islandgroup = pygame.sprite.Group()
@@ -395,6 +398,8 @@ class Mouse(pygame.sprite.Sprite):
         self.image = pygame.surface.Surface((self.radius*0.5, self.radius*0.5))
         delta1 = 12.5
         delta2 = 25
+        if self.r < 151:
+            self.r = 151
         w = self.radius*0.5 / 100.0
         h = self.radius*0.5 / 100.0
         # pointing down / up
@@ -427,10 +432,7 @@ class Mouse(pygame.sprite.Sprite):
             self.x, self.y = pygame.mouse.get_pos()
         elif self.control == "keyboard1":
             pressed = pygame.key.get_pressed()
-            if pressed[pygame.K_LSHIFT]:
-                delta = 2
-            else:
-                delta = 9
+            delta = 9
             if pressed[pygame.K_w]:
                 self.y -= delta
             if pressed[pygame.K_s]:
@@ -441,10 +443,7 @@ class Mouse(pygame.sprite.Sprite):
                 self.x += delta
         elif self.control == "keyboard2":
             pressed = pygame.key.get_pressed()
-            if pressed[pygame.K_RSHIFT]:
-                delta = 2
-            else:
-                delta = 9
+            delta = 9
             if pressed[pygame.K_UP]:
                 self.y -= delta
             if pressed[pygame.K_DOWN]:
@@ -493,115 +492,116 @@ class Island(VectorSprite):
             self.ai()
             
     def ai(self):
-        if (Game.enemy_color[0] == self.empire_color and Game.enemy1_wood < 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_wood < 5):
-            if random.random() < (0.005*Game.speed):
+        if Game.player == 1:
+            if (Game.enemy_color[0] == self.empire_color and Game.enemy1_wood < 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_wood < 5):
+                if random.random() < (0.005*Game.speed):
+                    if self.ships > 0: #are there any ships?
+                        target = []
+                        for i in Game.wood_islandgroup:
+                            d = distance(self.pos,i.pos)
+                            if i.empire_color == self.empire_color:
+                                continue
+                            elif i.empire_color == Game.player_color:
+                                if len(target) == 0:
+                                    target = [d+1000,i.pos]
+                                elif target[0] > d+1000:
+                                    target = [d+1000,i.pos]
+                            else:
+                                if len(target) == 0:
+                                    target = [d,i.pos]
+                                elif target[0] > d:
+                                    target = [d,i.pos]
+                        if len(target) != 0:
+                            self.ships -= 1
+                            s = pygame.math.Vector2(self.pos[0],self.pos[1])
+                            v = target[1] - s
+                            m = v.normalize() * 30
+                            move = pygame.math.Vector2(m)
+                            start = v.normalize() * (self.size//2 + 25)# 25 = length of ship
+                            e = pygame.math.Vector2(1,0)
+                            angle = e.angle_to(m)
+                            Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
+            if (Game.enemy_color[0] == self.empire_color and Game.enemy1_iron < 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_iron < 5):
+                if random.random() < (0.005*Game.speed):
+                    if self.ships > 0: #are there any ships?
+                        target = []
+                        for i in Game.iron_islandgroup:
+                            d = distance(self.pos,i.pos)
+                            if i.empire_color == self.empire_color:
+                                continue
+                            elif i.empire_color == Game.player_color:
+                                if len(target) == 0:
+                                    target = [d+1000,i.pos]
+                                elif target[0] > d+1000:
+                                    target = [d+1000,i.pos]
+                            else:
+                                if len(target) == 0:
+                                    target = [d,i.pos]
+                                elif target[0] > d:
+                                    target = [d,i.pos]
+                        if len(target) != 0:
+                            self.ships -= 1
+                            v = target[1] - self.pos
+                            m = v.normalize() * 30
+                            move = pygame.math.Vector2(m)
+                            start = v.normalize() * (self.size//2 + 25)# 25 = length of ship
+                            e = pygame.math.Vector2(1,0)
+                            angle = e.angle_to(m)
+                            Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
+            if (Game.enemy_color[0] == self.empire_color and Game.enemy1_iron > 5 and Game.enemy1_wood > 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_iron > 5 and Game.enemy2_wood > 5):
+                if random.random() < (0.005*Game.speed):
+                    if self.ships > 0: #are there any ships?
+                        target = []
+                        for i in Game.ship_islandgroup:
+                            d = distance(self.pos,i.pos)
+                            if i.empire_color == self.empire_color:
+                                continue
+                            elif i.empire_color == Game.player_color:
+                                if len(target) == 0:
+                                    target = [d+1000,i.pos]
+                                elif target[0] > d+1000:
+                                    target = [d+1000,i.pos]
+                            else:
+                                if len(target) == 0:
+                                    target = [d,i.pos]
+                                elif target[0] > d:
+                                    target = [d,i.pos]
+                        if len(target) != 0:
+                            self.ships -= 1
+                            v = target[1] - self.pos
+                            m = v.normalize() * 30
+                            move = pygame.math.Vector2(m)
+                            start = v.normalize() * (self.size//2 + 25)# 25 = length of ship
+                            e = pygame.math.Vector2(1,0)
+                            angle = e.angle_to(m)
+                            Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
+            if random.random() < ((0.0001 + Game.enemy_ships*0.0005) *Game.speed):
                 if self.ships > 0: #are there any ships?
-                    target = []
-                    for i in Game.wood_islandgroup:
-                        d = distance(self.pos,i.pos)
-                        if i.empire_color == self.empire_color:
-                            continue
-                        elif i.empire_color == Game.player_color:
-                            if len(target) == 0:
-                                target = [d+1000,i.pos]
-                            elif target[0] > d+1000:
-                                target = [d+1000,i.pos]
-                        else:
-                            if len(target) == 0:
-                                target = [d,i.pos]
-                            elif target[0] > d:
-                                target = [d,i.pos]
-                    if len(target) != 0:
-                        self.ships -= 1
-                        s = pygame.math.Vector2(self.pos[0],self.pos[1])
-                        v = target[1] - s
-                        m = v.normalize() * 30
-                        move = pygame.math.Vector2(m)
-                        start = v.normalize() * (self.size//2 + 25)# 25 = length of ship
-                        e = pygame.math.Vector2(1,0)
-                        angle = e.angle_to(m)
-                        Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
-        if (Game.enemy_color[0] == self.empire_color and Game.enemy1_iron < 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_iron < 5):
-            if random.random() < (0.005*Game.speed):
-                if self.ships > 0: #are there any ships?
-                    target = []
-                    for i in Game.iron_islandgroup:
-                        d = distance(self.pos,i.pos)
-                        if i.empire_color == self.empire_color:
-                            continue
-                        elif i.empire_color == Game.player_color:
-                            if len(target) == 0:
-                                target = [d+1000,i.pos]
-                            elif target[0] > d+1000:
-                                target = [d+1000,i.pos]
-                        else:
-                            if len(target) == 0:
-                                target = [d,i.pos]
-                            elif target[0] > d:
-                                target = [d,i.pos]
-                    if len(target) != 0:
-                        self.ships -= 1
-                        v = target[1] - self.pos
-                        m = v.normalize() * 30
-                        move = pygame.math.Vector2(m)
-                        start = v.normalize() * (self.size//2 + 25)# 25 = length of ship
-                        e = pygame.math.Vector2(1,0)
-                        angle = e.angle_to(m)
-                        Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
-        if (Game.enemy_color[0] == self.empire_color and Game.enemy1_iron > 5 and Game.enemy1_wood > 5) or (Game.enemy_color[1] == self.empire_color and Game.enemy2_iron > 5 and Game.enemy2_wood > 5):
-            if random.random() < (0.005*Game.speed):
-                if self.ships > 0: #are there any ships?
-                    target = []
-                    for i in Game.ship_islandgroup:
-                        d = distance(self.pos,i.pos)
-                        if i.empire_color == self.empire_color:
-                            continue
-                        elif i.empire_color == Game.player_color:
-                            if len(target) == 0:
-                                target = [d+1000,i.pos]
-                            elif target[0] > d+1000:
-                                target = [d+1000,i.pos]
-                        else:
-                            if len(target) == 0:
-                                target = [d,i.pos]
-                            elif target[0] > d:
-                                target = [d,i.pos]
-                    if len(target) != 0:
-                        self.ships -= 1
-                        v = target[1] - self.pos
-                        m = v.normalize() * 30
-                        move = pygame.math.Vector2(m)
-                        start = v.normalize() * (self.size//2 + 25)# 25 = length of ship
-                        e = pygame.math.Vector2(1,0)
-                        angle = e.angle_to(m)
-                        Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
-        if random.random() < ((0.0001 + Game.enemy_ships*0.0005) *Game.speed):
-            if self.ships > 0: #are there any ships?
-                    target = []
-                    for i in Game.nonresource_islandgroup:
-                        d = distance(self.pos,i.pos)
-                        if i.empire_color == self.empire_color:
-                            continue
-                        elif i.empire_color == Game.player_color:
-                            if len(target) == 0:
-                                target = [d+1000,i.pos]
-                            elif target[0] > d+1000:
-                                target = [d+1000,i.pos]
-                        else:
-                            if len(target) == 0:
-                                target = [d,i.pos]
-                            elif target[0] > d:
-                                target = [d,i.pos]
-                    if len(target) != 0:
-                        self.ships -= 1
-                        v = target[1] - self.pos
-                        m = v.normalize() * 30
-                        move = pygame.math.Vector2(m)
-                        start = v.normalize() * (self.size//2 + 25)# 25 = length of ship
-                        e = pygame.math.Vector2(1,0)
-                        angle = e.angle_to(m)
-                        Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
-        
+                        target = []
+                        for i in Game.nonresource_islandgroup:
+                            d = distance(self.pos,i.pos)
+                            if i.empire_color == self.empire_color:
+                                continue
+                            elif i.empire_color == Game.player_color:
+                                if len(target) == 0:
+                                    target = [d+1000,i.pos]
+                                elif target[0] > d+1000:
+                                    target = [d+1000,i.pos]
+                            else:
+                                if len(target) == 0:
+                                    target = [d,i.pos]
+                                elif target[0] > d:
+                                    target = [d,i.pos]
+                        if len(target) != 0:
+                            self.ships -= 1
+                            v = target[1] - self.pos
+                            m = v.normalize() * 30
+                            move = pygame.math.Vector2(m)
+                            start = v.normalize() * (self.size//2 + 25)# 25 = length of ship
+                            e = pygame.math.Vector2(1,0)
+                            angle = e.angle_to(m)
+                            Ship(pos=self.pos+start, destination=target[1], move=move, angle=angle, empire_color=self.empire_color)
+            
 
 class Wood_Island(Island):
     
@@ -847,7 +847,8 @@ class Viewer(object):
         self.playtime = 0.0
         self.click_indicator_time = 0
         self.last_click = 0
-        self.island_selected = []
+        self.island_selected_1 = []
+        self.island_selected_2 = []
         self.end_game = False
         self.newlevel = False
         self.end_gametime = 0
@@ -977,18 +978,6 @@ class Viewer(object):
                 Game.enemy_ships += 1        
     
     def new_level(self):
-        try: 
-            level = Levels.create_sprites(Game.level)
-        except:
-            print("-------------------------You won the game------------------------")
-            Game.level = 1
-            for l in Levels.levels.keys():
-                if int(l) <= 0:
-                    Game.level -= 1 #for every tutorial level we go one level below 0
-            self.new_level()
-            self.menu_run()
-            return
-
         Game.player_iron = 0
         Game.player_iron_int = 0
         Game.player_wood = 0
@@ -999,45 +988,99 @@ class Viewer(object):
         Game.enemy2_wood = 0
         self.clean_up()
         self.island_selected = []
+        
+        if Game.player == 1:
+            try: 
+                level = Levels.create_sprites(Game.level)
+            except:
+                print("-------------------------You won the game------------------------")
+                Game.level = 1
+                for l in Levels.levels.keys():
+                    if int(l) <= 0:
+                        Game.level -= 1 #for every tutorial level we go one level below 0
+                self.new_level()
+                self.menu_run()
+                return
+                
+            try:  #try to kill mouse from multiplayer mode
+                del(self.mouse1)
+                del(self.mouse2)
+            except:
+                print("No mouse to kill")
 
-        for x in range(len(level["Main_islands"])):
-            if level["Main_islands"][x][1] == Game.player_color:
-                p_ships = int(level["Main_islands"][x][2]) + Game.difficulty
-            else: 
-                p_ships = level["Main_islands"][x][2]
-            if len(level["Main_islands"][x]) == 4:
-                i_size = level["Main_islands"][x][3]
+            for x in range(len(level["Main_islands"])):
+                if level["Main_islands"][x][1] == Game.player_color:
+                    p_ships = int(level["Main_islands"][x][2]) + Game.difficulty
+                else: 
+                    p_ships = level["Main_islands"][x][2]
+                if len(level["Main_islands"][x]) == 4:
+                    i_size = level["Main_islands"][x][3]
+                else:
+                    i_size = None #default size
+                Main_Island(pos=pygame.math.Vector2(level["Main_islands"][x][0]), empire_color = level["Main_islands"][x][1], ships=p_ships, size=i_size)
+            for x in range(len(level["Iron_islands"])):
+                if len(level["Iron_islands"][x]) == 4:
+                    i_size = level["Iron_islands"][x][3]
+                else:
+                    i_size = None #default size
+                Iron_Island(pos=pygame.math.Vector2(level["Iron_islands"][x][0]), empire_color = level["Iron_islands"][x][1], ships=level["Iron_islands"][x][2], size=i_size)
+            for x in range(len(level["Wood_islands"])):
+                if len(level["Wood_islands"][x]) == 4:
+                    i_size = level["Wood_islands"][x][3]
+                else:
+                    i_size = None #default size
+                Wood_Island(pos=pygame.math.Vector2(level["Wood_islands"][x][0]), empire_color = level["Wood_islands"][x][1], ships=level["Wood_islands"][x][2], size=i_size)
+            for x in range(len(level["Ship_islands"])):
+                if len(level["Ship_islands"][x]) == 4:
+                    i_size = level["Ship_islands"][x][3]
+                else:
+                    i_size = None #default size
+                Ship_Island(pos=pygame.math.Vector2(level["Ship_islands"][x][0]), empire_color = level["Ship_islands"][x][1], ships=level["Ship_islands"][x][2], size=i_size)
+                    
+            if "Game mode" in level.keys() and level["Game mode"] in Game.gamemodes:
+                Game.gamemode = level["Game mode"]
             else:
-                i_size = None #default size
-            Main_Island(pos=pygame.math.Vector2(level["Main_islands"][x][0]), empire_color = level["Main_islands"][x][1], ships=p_ships, size=i_size)
-        for x in range(len(level["Iron_islands"])):
-            if len(level["Iron_islands"][x]) == 4:
-                i_size = level["Iron_islands"][x][3]
-            else:
-                i_size = None #default size
-            Iron_Island(pos=pygame.math.Vector2(level["Iron_islands"][x][0]), empire_color = level["Iron_islands"][x][1], ships=level["Iron_islands"][x][2], size=i_size)
-        for x in range(len(level["Wood_islands"])):
-            if len(level["Wood_islands"][x]) == 4:
-                i_size = level["Wood_islands"][x][3]
-            else:
-                i_size = None #default size
-            Wood_Island(pos=pygame.math.Vector2(level["Wood_islands"][x][0]), empire_color = level["Wood_islands"][x][1], ships=level["Wood_islands"][x][2], size=i_size)
-        for x in range(len(level["Ship_islands"])):
-            if len(level["Ship_islands"][x]) == 4:
-                i_size = level["Ship_islands"][x][3]
-            else:
-                i_size = None #default size
-            Ship_Island(pos=pygame.math.Vector2(level["Ship_islands"][x][0]), empire_color = level["Ship_islands"][x][1], ships=level["Ship_islands"][x][2], size=i_size)
+                Game.gamemode = "Conquer"
+        
+        elif Game.player == 2: #1 vs. 1
+            Game.level = random.randint(1,11)  #random level with two empires
+            level = Levels.create_sprites(Game.level)
+            
+            p_ships = int(level["Main_islands"][0][2])
+            for x in range(len(level["Main_islands"])):
+                if len(level["Main_islands"][x]) == 4:
+                    i_size = level["Main_islands"][x][3]
+                else:
+                    i_size = None #default size
+                Main_Island(pos=pygame.math.Vector2(level["Main_islands"][x][0]), empire_color = level["Main_islands"][x][1], ships=p_ships, size=i_size)
+            for x in range(len(level["Iron_islands"])):
+                if len(level["Iron_islands"][x]) == 4:
+                    i_size = level["Iron_islands"][x][3]
+                else:
+                    i_size = None #default size
+                Iron_Island(pos=pygame.math.Vector2(level["Iron_islands"][x][0]), empire_color = level["Iron_islands"][x][1], ships=level["Iron_islands"][x][2], size=i_size)
+            for x in range(len(level["Wood_islands"])):
+                if len(level["Wood_islands"][x]) == 4:
+                    i_size = level["Wood_islands"][x][3]
+                else:
+                    i_size = None #default size
+                Wood_Island(pos=pygame.math.Vector2(level["Wood_islands"][x][0]), empire_color = level["Wood_islands"][x][1], ships=level["Wood_islands"][x][2], size=i_size)
+            for x in range(len(level["Ship_islands"])):
+                if len(level["Ship_islands"][x]) == 4:
+                    i_size = level["Ship_islands"][x][3]
+                else:
+                    i_size = None #default size
+                Ship_Island(pos=pygame.math.Vector2(level["Ship_islands"][x][0]), empire_color = level["Ship_islands"][x][1], ships=level["Ship_islands"][x][2], size=i_size)
+            
+            Game.gamemode = "Conquer"
+            self.mouse1 = Mouse(control='keyboard1', color=Game.player_color)
+            self.mouse2 = Mouse(control="keyboard2", color=[255,0,0])
+        
         
         if "Ships" in level.keys():
             Game.ship_size = level["Ships"]
         else:
             Game.ship_size = (50,20)
-        
-        if "Game mode" in level.keys() and level["Game mode"] in Game.gamemodes:
-            Game.gamemode = level["Game mode"]
-        else:
-            Game.gamemode = "Conquer"
         
         for i in Game.islandgroup:
                 if i.empire_color == Game.player_color:
@@ -1053,6 +1096,7 @@ class Viewer(object):
         self.allgroup =  pygame.sprite.LayeredUpdates() # for drawing
         self.flytextgroup = pygame.sprite.Group()
         self.shipgroup = pygame.sprite.Group()
+        self.mousegroup = pygame.sprite.Group()
         
         VectorSprite.groups = self.allgroup
         Flytext.groups = self.allgroup, self.flytextgroup
@@ -1061,7 +1105,7 @@ class Viewer(object):
         Iron_Island.groups = self.allgroup, Game.islandgroup, Game.iron_islandgroup
         Ship_Island.groups = self.allgroup, Game.islandgroup, Game.ship_islandgroup, Game.nonresource_islandgroup
         Main_Island.groups = self.allgroup, Game.islandgroup, Game.main_islandgroup, Game.nonresource_islandgroup
-        Mouse.groups = self.allgroup
+        Mouse.groups = self.allgroup, self.mousegroup
         
         
         # ------ player1,2,3: mouse, keyboard, joystick ---
@@ -1073,6 +1117,27 @@ class Viewer(object):
         
         self.new_level()
 
+    def send_ship(self, mouse_pos, island_selected, empire_color):
+        """Tries to send a ship from one island to another."""
+        for i in Game.islandgroup:
+            dist = distance((i.pos[0],i.pos[1]), (mouse_pos[0],-mouse_pos[1]))
+            if dist < i.size/2:
+                if len(island_selected) != 0: #Island selected?
+                    for s in Game.islandgroup: #Which island is selected?
+                        if (island_selected[0],island_selected[1]) == s.pos:
+                            if distance((island_selected[0],island_selected[1]), i.pos) != 0: #is selected island != target island?
+                                if s.empire_color == empire_color: #is it your island?
+                                    if s.ships > 0: #are there any ships?
+                                        s.ships -= 1
+                                        v = i.pos - pygame.math.Vector2(s.pos.x, s.pos.y)
+                                        m = v.normalize() * 30
+                                        move = pygame.math.Vector2(m)
+                                        start = v.normalize() * (s.size//2 + 25)# 25 = length of ship
+                                        e = pygame.math.Vector2(1,0)
+                                        angle = e.angle_to(m)
+                                        Ship(pos=pygame.math.Vector2(island_selected[0],island_selected[1])+start, destination=i.pos, move=move, angle=angle, empire_color=s.empire_color)
+                                        break
+    
     def menu_run(self):
         """Not The mainloop"""
         running = True
@@ -1159,6 +1224,15 @@ class Viewer(object):
                                 Game.graphic = "J2"
                                 self.load_graphics()
                                 self.new_level()
+                        elif Menu.name == "Multiplayer" or Menu.name == "Mehrspieler":
+                            if text == "Single player" or text == "Einzelspieler":
+                                Game.player = 1
+                                Game.level = 1
+                                self.new_level()
+                            elif text == "1 vs. 1":
+                                Game.player = 2
+                                self.new_level()
+                                return
                         elif Menu.name == "Game speed" or Menu.name == "Geschwindigkeit":
                             if text == "Slow" or text == "Langsam":
                                 Game.speed = 0.5
@@ -1284,7 +1358,6 @@ class Viewer(object):
             milliseconds = self.clock.tick(self.fps) #
             seconds = milliseconds / 1000
             self.playtime += seconds
-            
             if gameOver:
                 if self.playtime > exittime:
                     running = False
@@ -1298,8 +1371,30 @@ class Viewer(object):
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.menu_run()
-                    elif event.key == pygame.K_m:
+                    if event.key == pygame.K_m:
                         self.menu_run()
+                    if Game.player == 2:
+                        if event.key == pygame.K_SPACE:  #Mouse 1 click
+                            for i in Game.islandgroup:
+                                dist = distance((i.pos[0],i.pos[1]), (self.mouse1.x,-self.mouse1.y))
+                                if dist < i.size/2:
+                                    self.island_selected_1 = [i.pos[0],i.pos[1],i.size]
+                                    break
+                                else:
+                                    self.island_selected_1 = []
+                        if event.key == pygame.K_LSHIFT:
+                            self.send_ship((self.mouse1.x,self.mouse1.y), self.island_selected_1, Game.player_color)
+                        if event.key == pygame.K_RCTRL:  #Mouse 2 click
+                            for i in Game.islandgroup:
+                                dist = distance((i.pos[0],i.pos[1]), (self.mouse2.x,-self.mouse2.y))
+                                if dist < i.size/2:
+                                    self.island_selected_2 = [i.pos[0],i.pos[1],i.size]
+                                    break
+                                else:
+                                    self.island_selected_2 = []
+                        if event.key == pygame.K_RSHIFT:
+                            self.send_ship((self.mouse2.x, self.mouse2.y), self.island_selected_2, (255,0,0))
+                            
             # delete everything on screen
             self.screen.blit(self.background, (0, 0))  # macht alles weiß
 
@@ -1341,12 +1436,18 @@ class Viewer(object):
                     break
                 if Game.gamemode == "Conquer":
                     if Game.enemy_ships == 0 and Game.enemy_islands == 0:
-                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You won the level!", fontsize=30, color=Game.player_color)
-                        self.end_gametime = self.playtime + 5
+                        if Game.player == 1:
+                            Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You won the level!", fontsize=30, color=Game.player_color)
+                        elif Game.player == 2:
+                            Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "The green player wins!", fontsize=30, color=Game.player_color)
+                        self.end_gametime = self.playtime + 10
                         self.newlevel = True
                     elif Game.player_ships == 0 and Game.player_islands == 0:
-                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=70, color=random.choice(Game.enemy_color))
-                        self.end_gametime = self.playtime + 5
+                        if Game.player == 1:
+                            Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=70, color=random.choice(Game.enemy_color))
+                        elif Game.player == 2:
+                            Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "The red player wins!", fontsize=70, color=random.choice(Game.enemy_color))
+                        self.end_gametime = self.playtime + 10
                         self.newlevel = True
                         Game.level -= 1
                     elif Game.player_ships == 0 and Game.enemy_ships == 0:
@@ -1368,42 +1469,29 @@ class Viewer(object):
                 #elif Game.gamemode == "Collect":
                 
             # ------------------ click on island ---------------
-            left,middle,right = pygame.mouse.get_pressed()
-            if oldright and not right:
-                mouse_pos = pygame.mouse.get_pos()
-                for i in Game.islandgroup:
-                    dist = distance((i.pos[0],i.pos[1]), (mouse_pos[0],-mouse_pos[1]))
-                    if dist < i.size/2:
-                        self.island_selected = [i.pos[0],i.pos[1],i.size]
-                        break
-                    else:
-                        self.island_selected = []
-            # -------------- send ship ----------------
-            if oldleft and not left:
-                mouse_pos = pygame.mouse.get_pos()
-                for i in Game.islandgroup:
-                    dist = distance((i.pos[0],i.pos[1]), (mouse_pos[0],-mouse_pos[1]))
-                    if dist < i.size/2:
-                        if len(self.island_selected) != 0: #Island selected?
-                            for s in Game.islandgroup: #Which island is selected?
-                                if (self.island_selected[0],self.island_selected[1]) == s.pos:
-                                    if distance((self.island_selected[0],self.island_selected[1]), i.pos) != 0: #is selected island != target island?
-                                        if s.empire_color == Game.player_color: #is it your island?
-                                            if s.ships > 0: #are there any ships?
-                                                s.ships -= 1
-                                                v = i.pos - pygame.math.Vector2(s.pos.x, s.pos.y)
-                                                m = v.normalize() * 30
-                                                move = pygame.math.Vector2(m)
-                                                start = v.normalize() * (s.size//2 + 25)# 25 = length of ship
-                                                e = pygame.math.Vector2(1,0)
-                                                angle = e.angle_to(m)
-                                                Ship(pos=pygame.math.Vector2(self.island_selected[0],self.island_selected[1])+start, destination=i.pos, move=move, angle=angle, empire_color=s.empire_color)
-                                                break
-            oldleft, oldmiddle, oldright = left, middle, right
+            if Game.player == 1:
+                left,middle,right = pygame.mouse.get_pressed()
+                if oldright and not right:
+                    mouse_pos = pygame.mouse.get_pos()
+                    for i in Game.islandgroup:
+                        dist = distance((i.pos[0],i.pos[1]), (mouse_pos[0],-mouse_pos[1]))
+                        if dist < i.size/2:
+                            self.island_selected_1 = [i.pos[0],i.pos[1],i.size]
+                            break
+                        else:
+                            self.island_selected_1 = []
+                # -------------- send ship ----------------
+                if oldleft and not left:
+                    mouse_pos = pygame.mouse.get_pos()
+                    self.send_ship(mouse_pos, self.island_selected_1, Game.player_color)
                 
-            if self.island_selected:
-                pygame.draw.circle(self.screen, (100,100,100), (int(self.island_selected[0]),-int(self.island_selected[1])), self.island_selected[2]//2+25)
-
+                oldleft, oldmiddle, oldright = left, middle, right
+                
+            if self.island_selected_1:
+                pygame.draw.circle(self.screen, (100,100,100), (int(self.island_selected_1[0]),-int(self.island_selected_1[1])), self.island_selected_1[2]//2+25)
+            if self.island_selected_2:
+                pygame.draw.circle(self.screen, (100,100,100), (int(self.island_selected_2[0]),-int(self.island_selected_2[1])), self.island_selected_2[2]//2+25)
+                
             #-----------collision detection ------
             for i in Game.islandgroup:
                 crashgroup = pygame.sprite.spritecollide(i, self.shipgroup,
