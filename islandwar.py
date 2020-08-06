@@ -17,6 +17,7 @@ import math
 import islandwar_levels as Levels
 import islandwar_menu as Menu
 
+
 def structurize_text(text, linelength):
     """returns a list containing strings with the split up textstring with less or equal chars than the linelength"""
     struct_text = []
@@ -25,15 +26,26 @@ def structurize_text(text, linelength):
     for word in words:
         if len(textline + word) <= linelength:
             textline += word + " "
+        elif len(word) > linelength:
+            struct_text.append(textline)
+            textline = ""
+            for char in word:
+                if len(textline) < (linelength-1):
+                    textline += char
+                else:
+                    textline += "-"
+                    struct_text.append(textline)
+                    textline = "" + char
+            textline += " "
         else:
             struct_text.append(textline)
             textline = "" + word + " "
     struct_text.append(textline)
     return struct_text
-    
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
-    base_path = getattr(sys, '_MEIPASS2', os.path.dirname(os.path.abspath(__file__)))
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
 def make_text(msg="pygame is cool", fontcolor=(255, 0, 255), fontsize=42, font="mono"):
@@ -849,9 +861,13 @@ class Viewer(object):
         self.last_click = 0
         self.island_selected_1 = []
         self.island_selected_2 = []
-        self.end_game = False
-        self.newlevel = False
-        self.end_gametime = 0
+        self.level_win_screen = False
+        self.level_lose_screen = False
+        self.player_win_screen = False
+        self.level_draw_screen = False
+        #self.end_game = False
+        #self.newlevel = False
+        #self.end_gametime = 0
         self.load_graphics()
         # ------ background images ------
         self.backgroundfilenames = [] # every .jpg file in folder 'data'
@@ -911,22 +927,44 @@ class Viewer(object):
         pass
         
     def load_graphics(self):
-        Viewer.images["ship"] = pygame.image.load(os.path.join("data", "Ship.png")).convert_alpha()
-        Viewer.images["player_ship"] = pygame.image.load(os.path.join("data", "player_ship.png")).convert_alpha()
-        Viewer.images["red_empire_ship"] = pygame.image.load(os.path.join("data", "red_empire_ship.png")).convert_alpha()
-        Viewer.images["ship_island"] = pygame.image.load(os.path.join("data", "ship_island.png")).convert_alpha()
+        print("Path: ", resource_path("Ship.png"))
+        #print(os.path.join("data", "player_ship.png"))
+        
+        #Viewer.images["ship"] = pygame.image.load(os.path.join("data", "Ship.png")).convert_alpha()
+        try:
+            Viewer.images["ship"] = pygame.image.load(resource_path(os.path.join("data", "Ship.png"))).convert_alpha()
+        except:
+            Viewer.images["ship"] = pygame.image.load(resource_path("Ship.png")).convert_alpha()
+        #Viewer.images["player_ship"] = pygame.image.load(os.path.join("data", "player_ship.png")).convert_alpha()
+        try:
+            Viewer.images["player_ship"] = pygame.image.load(resource_path(os.path.join("data", "player_ship.png"))).convert_alpha()
+        except:
+            Viewer.images["player_ship"] = pygame.image.load(resource_path("player_ship.png")).convert_alpha()
+        #Viewer.images["red_empire_ship"] = pygame.image.load(os.path.join("data", "red_empire_ship.png")).convert_alpha()
+        Viewer.images["red_empire_ship"] = pygame.image.load(resource_path(os.path.join("data", "red_empire_ship.png"))).convert_alpha()
+        #Viewer.images["ship_island"] = pygame.image.load(os.path.join("data", "ship_island.png")).convert_alpha()
+        Viewer.images["ship_island"] = pygame.image.load(resource_path(os.path.join("data", "ship_island.png"))).convert_alpha()
         if Game.graphic == "I":
-            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
-            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
-            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
+            #Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island.png")).convert_alpha()
+            #Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island.png")).convert_alpha()
+            #Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island.png")).convert_alpha()
+            Viewer.images["main_island"] = pygame.image.load(resource_path(os.path.join("data", "main_island.png"))).convert_alpha()
+            Viewer.images["wood_island"] = pygame.image.load(resource_path(os.path.join("data", "wood_island.png"))).convert_alpha()
+            Viewer.images["iron_island"] = pygame.image.load(resource_path(os.path.join("data", "iron_island.png"))).convert_alpha()
         elif Game.graphic == "J":
-            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
-            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island2.png")).convert_alpha()
-            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island2.png")).convert_alpha()
+            #Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
+            #Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island2.png")).convert_alpha()
+            #Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island2.png")).convert_alpha()
+            Viewer.images["main_island"] = pygame.image.load(resource_path(os.path.join("data", "main_island2.png"))).convert_alpha()
+            Viewer.images["wood_island"] = pygame.image.load(resource_path(os.path.join("data", "wood_island2.png"))).convert_alpha()
+            Viewer.images["iron_island"] = pygame.image.load(resource_path(os.path.join("data", "iron_island2.png"))).convert_alpha()
         elif Game.graphic == "J2":
-            Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
-            Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island3.png")).convert_alpha()
-            Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island3.png")).convert_alpha()
+            #Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
+            #Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island3.png")).convert_alpha()
+            #Viewer.images["iron_island"] = pygame.image.load(os.path.join("data", "iron_island3.png")).convert_alpha()
+            Viewer.images["main_island"] = pygame.image.load(resource_path(os.path.join("data", "main_island2.png"))).convert_alpha()
+            Viewer.images["wood_island"] = pygame.image.load(resource_path(os.path.join("data", "wood_island3.png"))).convert_alpha()
+            Viewer.images["iron_island"] = pygame.image.load(resource_path(os.path.join("data", "iron_island3.png"))).convert_alpha()
         Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (200, 200))
         
     def clean_up(self):
@@ -978,6 +1016,10 @@ class Viewer(object):
                 Game.enemy_ships += 1        
     
     def new_level(self):
+        self.level_win_screen = False
+        self.level_lose_screen = False
+        self.player_win_screen = False
+        self.level_draw_screen = False
         Game.player_iron = 0
         Game.player_iron_int = 0
         Game.player_wood = 0
@@ -987,7 +1029,9 @@ class Viewer(object):
         Game.enemy2_iron = 0
         Game.enemy2_wood = 0
         self.clean_up()
-        self.island_selected = []
+        #self.island_selected = []
+        self.island_selected_1 = []
+        self.island_selected_2 = []
         
         if Game.player == 1:
             try: 
@@ -1140,6 +1184,8 @@ class Viewer(object):
     
     def menu_run(self):
         """Not The mainloop"""
+        if Game.quit_game == True:
+            return
         running = True
         #pygame.mouse.set_visible(False)
         self.menu = True
@@ -1162,7 +1208,8 @@ class Viewer(object):
                 # ------- pressed and released key ------
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        running = False
+                        return
+                        #running = False
                     if event.key == pygame.K_UP:
                         Menu.cursor -= 1
                         Menu.cursor = max(0, Menu.cursor) # not < 0
@@ -1339,14 +1386,109 @@ class Viewer(object):
             # -------- next frame -------------
             pygame.display.flip()
     
+    def levelscreen_run(self):
+        """Creates a small window showing informations for the following level/informing about the winner of the last level"""
+        if Game.quit_game == True:
+            return
+        running = True
+        oldleft, oldmiddle, oldright  = False, False, False
+        while running:
+            #if Game.language == "English":
+            #    settings = Menu.menu_e
+            #    descr = Menu.descr_e
+            #elif Game.language == "German":
+            #    settings = Menu.menu_d
+            #    descr = Menu.descr_d
+            #pygame.mixer.music.pause()
+            milliseconds = self.clock.tick(self.fps)
+            seconds = milliseconds / 1000
+            # -------- events ------
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    Game.quit_game = True
+                    running = False
+                # ------- pressed and released key ------
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.menu_run()
+                        return
+            # ------delete everything on screen-------
+            self.screen.blit(self.background, (0, 0))
+            
+            # -------------- UPDATE all sprites -------             
+            self.flytextgroup.update(seconds)
+
+            # ----------- clear, draw , update, flip -----------------
+            self.allgroup.draw(self.screen)
+            for i in Game.islandgroup:
+                if i.empire_color != Game.neutral_color:
+                    write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(i.empire_color))
+                else:
+                    if i.ships != 0:
+                       write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(1,1,1))
+            
+            pygame.draw.rect(self.screen,(170,170,170),(Viewer.width//10,Viewer.height//10,Viewer.width//1.25,Viewer.height//1.25))
+            if self.level_win_screen:
+                write(self.screen, text="You won the level!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
+                pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
+                write(self.screen, "Continue", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
+                continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+                Game.level += 1
+            elif self.player_win_screen:
+                if Game.enemy_ships == 0 and Game.enemy_islands == 0:
+                    write(self.screen, text="The green Player wins!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
+                elif Game.player_ships == 0 and Game.player_islands == 0:
+                    write(self.screen, text="The red Player wins!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
+                pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
+                write(self.screen, "Again!", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
+                continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+            elif self.level_lose_screen:
+                write(self.screen, text="You lost the level!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
+                pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
+                write(self.screen, "Try again", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
+                continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+            elif self.level_draw_screen:
+                write(self.screen, text="No one wins!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
+                pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
+                write(self.screen, "Play again", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
+                continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+                
+            pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2-250,Viewer.height//1.5,210,50))
+            write(self.screen, "Return to menu", x=Viewer.width//2-240, y=Viewer.height//1.5+10)
+            return_button = [Viewer.width//2-250,Viewer.height//1.5,210,50]
+            
+            left,middle,right = pygame.mouse.get_pressed()
+            if oldleft and not left:
+                mouse_pos = pygame.mouse.get_pos()
+                if mouse_pos[0] >= continue_button[0] and mouse_pos[0] <= (continue_button[0]+continue_button[2]):
+                    if mouse_pos[1] >= continue_button[1] and mouse_pos[1] <= (continue_button[1]+continue_button[3]):
+                        self.new_level()
+                        running = False
+                if mouse_pos[0] >= return_button[0] and mouse_pos[0] <= (return_button[0]+return_button[2]):
+                    if mouse_pos[1] >= return_button[1] and mouse_pos[1] <= (return_button[1]+return_button[3]):
+                        self.menu_run()
+                        running = False
+            #pygame.draw.rect(self.screen,(230,230,230),(1000,90,350,450))
+            
+            
+            
+            self.flytextgroup.draw(self.screen)
+            
+            oldleft, oldmiddle, oldright = left, middle, right
+            
+            # -------- next frame -------------
+            pygame.display.flip()
+
+    
     def run(self):
         """The mainloop"""
+        if Game.quit_game == True:
+            return
         running = True
         Viewer.fullscreen = True
         self.set_screenresolution()
         #pygame.mouse.set_visible(False)
         oldleft, oldmiddle, oldright  = False, False, False
-        self.snipertarget = None
         gameOver = False
         exittime = 0
         self.menu_run()
@@ -1394,7 +1536,14 @@ class Viewer(object):
                                     self.island_selected_2 = []
                         if event.key == pygame.K_RSHIFT:
                             self.send_ship((self.mouse2.x, self.mouse2.y), self.island_selected_2, (255,0,0))
-                            
+                    else:
+                        if event.key == pygame.K_RIGHT:
+                            Game.speed += 0.5
+                        elif event.key == pygame.K_LEFT:
+                            Game.speed -= 0.5
+                            Game.speed = max(0,Game.speed)
+                            if Game.speed == 0:
+                                Flytext(x=Viewer.width//2,y=Viewer.height//2, text="Game paused", color=(0,0,0))
             # delete everything on screen
             self.screen.blit(self.background, (0, 0))  # macht alles weiß
 
@@ -1427,46 +1576,46 @@ class Viewer(object):
 
             self.update_gamevariables()
             # ------------------win or lose --------------------
-            if self.end_gametime < self.playtime:
-                if self.newlevel == True:
-                    self.newlevel = False
-                    Game.level += 1
-                    self.new_level()
-                elif self.end_game == True:
-                    break
-                if Game.gamemode == "Conquer":
-                    if Game.enemy_ships == 0 and Game.enemy_islands == 0:
-                        if Game.player == 1:
-                            Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You won the level!", fontsize=30, color=Game.player_color)
-                        elif Game.player == 2:
-                            Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "The green player wins!", fontsize=30, color=Game.player_color)
-                        self.end_gametime = self.playtime + 10
-                        self.newlevel = True
-                    elif Game.player_ships == 0 and Game.player_islands == 0:
-                        if Game.player == 1:
-                            Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=70, color=random.choice(Game.enemy_color))
-                        elif Game.player == 2:
-                            Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "The red player wins!", fontsize=70, color=random.choice(Game.enemy_color))
-                        self.end_gametime = self.playtime + 10
-                        self.newlevel = True
-                        Game.level -= 1
-                    elif Game.player_ships == 0 and Game.enemy_ships == 0:
-                        if (Game.player_island_types[2] == 0 and Game.player_wood < 5) or (Game.player_island_types[3] == 0 and Game.player_iron < 5) or Game.player_island_types[1] == 0:
-                            print("No resource island, no ships!")
-                            print(Game.enemy_island_types)
-                            if (Game.enemy_island_types[2] == 0 and Game.enemy1_wood < 5) or (Game.enemy_island_types[3] == 0 and Game.enemy1_iron < 5) or Game.enemy_island_types[1] == 0:
-                                print("Enemy too!")
-                                Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "No one wins!", fontsize=30, color=(0,0,0))
-                                self.end_gametime = self.playtime + 5
-                                self.newlevel = True
-                                Game.level -= 1
-                elif Game.gamemode == "Defend":
-                    print(Game.player_island_types[0])
-                    if Game.player_island_types[0] == 0:
-                        Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lost your island!", fontsize=30, color=random.choice(Game.enemy_color))
-                        self.end_gametime = self.playtime + 5
-                        self.end_game == True
-                #elif Game.gamemode == "Collect":
+            #if self.end_gametime < self.playtime:
+            #    if self.newlevel == True:
+            #        self.newlevel = False
+            #        Game.level += 1
+            #        self.new_level()
+            ##    elif self.end_game == True:
+             #       break
+            if Game.gamemode == "Conquer":
+                if Game.enemy_ships == 0 and Game.enemy_islands == 0:
+                    if Game.player == 1:
+                        #Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You won the level!", fontsize=30, color=Game.player_color)
+                        self.level_win_screen = True
+                        self.levelscreen_run()
+                    elif Game.player == 2:
+                        #Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "The green player wins!", fontsize=30, color=Game.player_color)
+                        self.player_win_screen = True
+                        self.levelscreen_run()
+                elif Game.player_ships == 0 and Game.player_islands == 0:
+                    if Game.player == 1:
+                        #Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lose!", fontsize=70, color=random.choice(Game.enemy_color))
+                        self.level_lose_screen = True
+                        self.levelscreen_run()
+                    elif Game.player == 2:
+                        #Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "The red player wins!", fontsize=70, color=random.choice(Game.enemy_color))
+                        self.player_win_screen = True
+                        self.levelscreen_run()
+                elif Game.player_ships == 0 and Game.enemy_ships == 0:
+                    if (Game.player_island_types[2] == 0 and Game.player_wood < 5) or (Game.player_island_types[3] == 0 and Game.player_iron < 5) or Game.player_island_types[1] == 0:
+                        if (Game.enemy_island_types[2] == 0 and Game.enemy1_wood < 5) or (Game.enemy_island_types[3] == 0 and Game.enemy1_iron < 5) or Game.enemy_island_types[1] == 0:
+                            #Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "No one wins!", fontsize=30, color=(0,0,0))
+                            self.level_draw_screen = True
+                            self.levelscreen_run()
+            elif Game.gamemode == "Defend":
+                print(Game.player_island_types[0])
+                if Game.player_island_types[0] == 0:
+                    #Flytext(x = Viewer.width//2, y = Viewer.height//2, text = "You lost your island!", fontsize=30, color=random.choice(Game.enemy_color))
+                    #self.end_gametime = self.playtime + 2
+                    self.level_lose_screen = True
+                    self.levelscreen_run()
+            #elif Game.gamemode == "Collect":
                 
             # ------------------ click on island ---------------
             if Game.player == 1:
