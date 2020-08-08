@@ -137,6 +137,8 @@ class Game():
     enemy2_wood = 0
     enemy2_iron = 0
     enemy_island_types = [0,0,0,0] #amount of [main,ship,wood,iron] islands of enemy
+    motivation_e = ["Don't give up!", "Try again!", "Good luck the next time!"]
+    motivation_d = ["Nicht aufgeben!", "Versuch es noch einmal", "Viel Glück beim nächsten Mal!"]
     
     wood_islandgroup = pygame.sprite.Group()
     iron_islandgroup = pygame.sprite.Group()
@@ -1016,6 +1018,7 @@ class Viewer(object):
                 Game.enemy_ships += 1        
     
     def new_level(self):
+        print(Game.level)
         self.level_win_screen = False
         self.level_lose_screen = False
         self.player_win_screen = False
@@ -1227,7 +1230,7 @@ class Viewer(object):
                             Menu.history.append(text) 
                             Menu.name = text
                             Menu.cursor = 0
-                        elif text == "Play":
+                        elif text == "Play" or text == "Spielen":
                             running = False
                         elif text == "back" or text == "zurück":
                             Menu.history = Menu.history[:-1] # remove last entry
@@ -1359,8 +1362,14 @@ class Viewer(object):
                 for y, line in enumerate(lines):
                     write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
             elif text[0:6] == "Level ":
-                if text[6:] in Levels.level_descriptions.keys():
-                    lines = structurize_text(Levels.level_descriptions[text[6:]],Menu.linelength)
+                if text[6:] in Levels.levels.keys():
+                    try:
+                        if Game.language == "English":
+                            lines = structurize_text(Levels.levels[text[6:]]["descr_e"],Menu.linelength)
+                        elif Game.language == "German":
+                            lines = structurize_text(Levels.levels[text[6:]]["descr_d"],Menu.linelength)
+                    except:
+                        lines = []
                     for y, line in enumerate(lines):
                         write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
             elif text[0:9] == "Tutorial ":
@@ -1369,13 +1378,25 @@ class Viewer(object):
                 for l in Levels.levels.keys():
                     if int(l) <= 0:
                         t += 1
-                    lines = structurize_text(Levels.levels_descriptions[text[-1]-t], Menu.linelength)
+                try:
+                    if Game.language == "English":
+                        lines = structurize_text(Levels.levels[text[-1]-t]["descr_e"], Menu.linelength)
+                    elif Game.language == "German":
+                        lines = structurize_text(Levels.levels[text[-1]-t]["descr_d"], Menu.linelength)
+                except:
+                    lines = []
                 for y, line in enumerate(lines):
                     write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
             elif text[0:8] == "Mission ":
                 level = str(int(text[8:])+100)
-                if level in Levels.level_descriptions.keys():
-                    lines = structurize_text(Levels.level_descriptions[level],Menu.linelength)
+                if level in Levels.levels.keys():
+                    try:
+                        if Game.language == "English":
+                            lines = structurize_text(Levels.levels[level]["descr_e"],Menu.linelength)
+                        elif Game.language == "German":
+                            lines = structurize_text(Levels.levels[level]["descr_d"],Menu.linelength)
+                    except:
+                        lines = []
                     for y, line in enumerate(lines):
                         write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
            # ---- menu_images -----
@@ -1392,6 +1413,10 @@ class Viewer(object):
             return
         running = True
         oldleft, oldmiddle, oldright  = False, False, False
+        if Game.language == "English":
+            motivation = random.choice(Game.motivation_e)
+        elif Game.language == "German":
+            motivation = random.choice(Game.motivation_d)
         while running:
             #if Game.language == "English":
             #    settings = Menu.menu_e
@@ -1427,13 +1452,14 @@ class Viewer(object):
                     if i.ships != 0:
                        write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(1,1,1))
             
+            
+            boxlength = 100 #How many chars in a row
             pygame.draw.rect(self.screen,(170,170,170),(Viewer.width//10,Viewer.height//10,Viewer.width//1.25,Viewer.height//1.25))
             if self.level_win_screen:
                 write(self.screen, text="You won the level!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
                 pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
                 write(self.screen, "Continue", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
                 continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
-                Game.level += 1
             elif self.player_win_screen:
                 if Game.enemy_ships == 0 and Game.enemy_islands == 0:
                     write(self.screen, text="The green Player wins!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
@@ -1443,10 +1469,28 @@ class Viewer(object):
                 write(self.screen, "Again!", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
                 continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
             elif self.level_lose_screen:
-                write(self.screen, text="You lost the level!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
                 pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
-                write(self.screen, "Try again", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
                 continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+                if Game.language == "English":
+                    write(self.screen, text="You lost the level!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
+                    #try:
+                    #print("Game level: ", Game.level)
+                    
+                    for y, line in enumerate(structurize_text(Levels.levels[Game.level]["hint_e"],boxlength)):
+                        write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
+                    #except:
+                    #    for y, line in enumerate(structurize_text(motivation,boxlength)):
+                    #        write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
+                    write(self.screen, "Try again", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
+                elif Game.language == "German":
+                    write(self.screen, text="Du hast verloren!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
+                    try:
+                        for y, line in enumerate(structurize_text(Levels.levels[Game.level]["hint_d"],boxlength)):
+                            write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
+                    except:
+                        for y, line in enumerate(structurize_text(motivation,boxlength)):
+                            write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
+                    write(self.screen, "Erneut versuchen", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
             elif self.level_draw_screen:
                 write(self.screen, text="No one wins!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
                 pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
@@ -1462,10 +1506,14 @@ class Viewer(object):
                 mouse_pos = pygame.mouse.get_pos()
                 if mouse_pos[0] >= continue_button[0] and mouse_pos[0] <= (continue_button[0]+continue_button[2]):
                     if mouse_pos[1] >= continue_button[1] and mouse_pos[1] <= (continue_button[1]+continue_button[3]):
+                        print("Next level!")
+                        if self.level_win_screen or self.player_win_screen:
+                            Game.level += 1
                         self.new_level()
                         running = False
                 if mouse_pos[0] >= return_button[0] and mouse_pos[0] <= (return_button[0]+return_button[2]):
                     if mouse_pos[1] >= return_button[1] and mouse_pos[1] <= (return_button[1]+return_button[3]):
+                        print("Menu!")
                         self.menu_run()
                         running = False
             #pygame.draw.rect(self.screen,(230,230,230),(1000,90,350,450))
@@ -1560,7 +1608,6 @@ class Viewer(object):
             if level <= 0:
                 for l in Levels.levels.keys():
                     if int(l) <= 0:
-                        
                         level += 1
                 write(self.screen, "Tutorial {}".format(level), x=1280, y=30)
             else:
@@ -1569,10 +1616,16 @@ class Viewer(object):
             self.allgroup.update(seconds)
             
             # -------------- write explanations for the current level on the screen ------------------
-            if str(Game.level) in Levels.level_descriptions.keys():
-                lines = structurize_text(Levels.level_descriptions[str(Game.level)],70)
-                for y, line in enumerate(lines):
-                    write(self.screen, line, x=200, y=50+y*25)
+            #if str(Game.level) in Levels.levels.keys():
+            try:
+                if Game.language == "English":
+                    lines = structurize_text(Levels.levels[str(Game.level)]["descr_e"],70)
+                elif Game.language == "German":
+                    lines = structurize_text(Levels.levels[str(Game.level)]["descr_d"],70)
+            except:
+                lines = []
+            for y, line in enumerate(lines):
+                write(self.screen, line, x=200, y=50+y*25)
 
             self.update_gamevariables()
             # ------------------win or lose --------------------
