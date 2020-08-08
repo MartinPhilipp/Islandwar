@@ -3,32 +3,58 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
                  #    "Iron_islands":[...]
                  #    "Wood_islands":[...]
                  #    "Ship_islands":[...]
-                 #opt:"Ships": (shipsizex, shipsizey)}
-                 #opt:"Game mode": "Conquer" or "Defend" or "Collect"
+                 #opt:"Ships": (shipsizex, shipsizey)
+                 #opt:"Game mode": "Conquer" or "Defend" or "Collect",
+                 #opt:"descr_e/d":"A short description of the level",
+                 #opt:"hint_e/d":"A hint that the player receives when he lost a the level",
            "-4":{"Main_islands":[((400,-400),(0,255,0),1),((1030,-400),(255,0,0),0)],#...............
                 "Iron_islands":[],                                                   #....M...eM.....
                 "Wood_islands":[],                                                   #...............
-                "Ship_islands":[]},
+                "Ship_islands":[],
+                "descr_e":"You are the leader of the island with a green ring around it. Your aim is to conquer all the enemy islands on the map. Right click on your island to select it, then left click on the enemy island to send a ship.",
+                "descr_d":"Du bist der Kommandant der Insel mit dem grünen Kreis herum. Dein Ziel ist es, alle gegnerischen Inseln zu besetzen. Mit einem Rechtsklick wählst du deine Insel aus, danach kannst du mit der linken Maustaste ein Schiff zur Insel des Gegners schicken.",
+                "hint_e":"You can't lose this level, you won't need hints",
+                "hint_d":"Dieses Level kann man nicht verlieren, man braucht keine Tipps."},
            "-3":{"Main_islands":[((300,-400),(0,255,0),3),((1130,-400),(255,0,0),0)],#.....I......
                 "Iron_islands":[((715,-200),(255,0,0),0)],                           #..M.....eM..
                 "Wood_islands":[((715,-600),(255,0,0),0)],                           #.....W......
-                "Ship_islands":[]},
+                "Ship_islands":[],
+                "descr_e":"On this map, there are three enemy islands. Conquer every one of them.",
+                "descr_d":"Auf dieser Karte sind drei feindliche Insel, die du besetzen musst.",
+                "hint_e":"You can't lose this level, you won't need hints",
+                "hint_d":"Dieses Level kann man nicht verlieren, man braucht keine Tipps."},
            "-2":{"Main_islands":[((300,-400),(0,255,0),0),((1130,-400),(255,0,0),0)],#....pI......
                 "Iron_islands":[((715,-200),(0,255,0),0)],                           #..M.pS..eM..
                 "Wood_islands":[((715,-600),(0,255,0),0)],                           #....pW......
-                "Ship_islands":[((715,-400),(0,255,0),0)]},
+                "Ship_islands":[((715,-400),(0,255,0),0)],
+                "descr_e":"You can build more ships in the shipyard. For every new ship, you first need 5 pieces of iron and wood. You can see your resources in the top left corner of the screen.",
+                "descr_d":"Du kannst in der Werft mehr Schiffe herstellen. Für jedes neue Schiff brauchst du 5 Stück Holz und 5 Stück Eisen. Du siehst deine Ressourcen links oben.",
+                "hint_e":"You can't lose this level, you won't need hints",
+                "hint_d":"Dieses Level kann man nicht verlieren, man braucht keine Tipps."},
            "-1":{"Main_islands":[((300,-400),(0,255,0),3),((1130,-400),(255,0,0),2)],#.....I......
                 "Iron_islands":[((715,-200),(0,0,255),0)],                           #..M.....eM..
                 "Wood_islands":[((715,-600),(0,0,255),0)],                           #.....W......
-                "Ship_islands":[]},
+                "Ship_islands":[],
+                "descr_e":"The enemy can have ships too. If you want to win, you have to defeat them and take all their islands.",
+                "descr_d":"Der Gegner kann auch Schiffe haben. Um zu gewinnnen, musst du sie zerstören und alle gegnerischen Inseln besetzen.",
+                "hint_e":"You can't lose this level, you won't need hints",
+                "hint_d":"Dieses Level kann man nicht verlieren, man braucht keine Tipps."},
            "0":{"Main_islands":[((300,-400),(0,255,0),5),((1130,-400),(255,0,0),3)],#pI..........
                 "Iron_islands":[((150,-200),(0,255,0),0)],                          #..M..S..eM..
                 "Wood_islands":[((150,-600),(0,255,0),0)],                          #pW..........
-                "Ship_islands":[((715,-400),(0,0,255),0)]},
+                "Ship_islands":[((715,-400),(0,0,255),0)],
+                "descr_e":"If you want to win this map, you'll have to collect resources and build more ships. Don't let the enemy take the resource islands or the shipyard!",
+                "descr_d":"Um auf dieser Karte zu gewinnen, musst du Ressourcen sammeln und neue Schiffe bauen. Lass den Feind nicht die Ressourceninseln oder die Werft einnehmen!",
+                "hint_e":"Try to protect your ressource islands until you have 5 pieces of wood and 5 pieces of iron. Only then you should capture the shipyard and defend it against the enemy.",
+                "hint_d":"Versuch die Ressourceninseln zu beschützen, bis du 5 Stück Holz und 5 Stück Eisen hast. Erst danach solltest du die Werft einnehmen und sie verteidigen."},
            "1":{"Main_islands":[((200,-400),(0,255,0),5),((1230,-400),(255,0,0),5)],#....W.....
                 "Iron_islands":[((715,-600),(0,0,255),0)],                          #M...S...eM
                 "Wood_islands":[((715,-200),(0,0,255),0)],                          #....I.....
-                "Ship_islands":[((715,-400),(0,0,255),0)]},
+                "Ship_islands":[((715,-400),(0,0,255),0)],
+                "descr_e":"It is time for your first real battle. Good luck!",
+                "descr_d":"Es ist Zeit für deine erste richtige Schlacht. Viel Glück!",
+                "hint_e":"Capture the ressource island at all cost, defend them and reinforce islands when necessary. If the enemy is able to collect enough ressources you have no chance.",
+                "hint_d":"",},
            "2":{"Main_islands":[((300,-400),(0,255,0),3),((1130,-400),(255,0,0),3)],#I..........I
                 "Iron_islands":[((150,-200),(0,0,255),0),((1280,-600),(0,0,255),0)],#..M..S..eM.. 
                 "Wood_islands":[((150,-600),(0,0,255),0),((1280,-200),(0,0,255),0)],#W..........W
@@ -94,13 +120,14 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
            "101":{"Main_islands":[((200,-400),(0,255,0),25)],
                   "Iron_islands":[],
                   "Wood_islands":[((1230,-200),(255,0,0),8),((1230,-400),(255,0,0),8),((1230,-600),(255,0,0),8)],
-                  "Ship_islands":[]},
+                  "Ship_islands":[],
+                  "Game mode":"Defend"},
            }
 
-level_descriptions = {"-4":"You are the leader of the island with a green ring around it. Your aim is to conquer all the enemy islands on the map. Right click on your island to select it, then left click on the enemy island to send a ship.",
-                      "-3":"On this map, there are three enemy islands. Conquer every one of them.",
-                      "-2":"You can build more ships in the shipyard. For every new ship, you first need 5 pieces of iron and wood. You can see your resources in the top left corner of the screen.",
-                      "-1":"The enemy can have ships too. If you want to win, you have to defeat them and take all their islands.",
+level_descriptions = {#"-4":"You are the leader of the island with a green ring around it. Your aim is to conquer all the enemy islands on the map. Right click on your island to select it, then left click on the enemy island to send a ship.",
+                      #"-3":"On this map, there are three enemy islands. Conquer every one of them.",
+                      #"-2":"You can build more ships in the shipyard. For every new ship, you first need 5 pieces of iron and wood. You can see your resources in the top left corner of the screen.",
+                      #"-1":"The enemy can have ships too. If you want to win, you have to defeat them and take all their islands.",
                       "0" :"If you want to win this map, you'll have to collect resources and build more ships. Don't let the enemy take the resource islands or the shipyard!",
                       "1" :"It is time for your first real battle. Good luck!",
                       "2" :"",
