@@ -7,7 +7,7 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
                  #opt:"Game mode": "Conquer" or "Defend" or "Collect",
                  #opt:"descr_e/d":"A short description of the level",
                  #opt:"hint_e/d":"A hint that the player receives when he lost a the level",
-           "-4":{"Main_islands":[((400,-400),(0,255,0),1),((1030,-400),(255,0,0),0)],#...............
+           "-4":{"Main_islands":[((400,-400),(255,0,0),1),((1030,-400),(255,0,0),0)],#...............
                 "Iron_islands":[],                                                   #....M...eM.....
                 "Wood_islands":[],                                                   #...............
                 "Ship_islands":[],
@@ -54,11 +54,13 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
                 "descr_e":"It is time for your first real battle. Good luck!",
                 "descr_d":"Es ist Zeit für deine erste richtige Schlacht. Viel Glück!",
                 "hint_e":"Capture the ressource island at all cost, defend them and reinforce islands when necessary. If the enemy is able to collect enough ressources you have no chance.",
-                "hint_d":"",},
+                "hint_d":"Du musst unbedingt die Ressourceninseln einnehmen, verteidigen und notfalls mehr Schiffe zur Verstärkung hinschicken. Wenn der Feind es schafft zu viele Ressourcen zu sammeln, hast du keine Chance.",},
            "2":{"Main_islands":[((300,-400),(0,255,0),3),((1130,-400),(255,0,0),3)],#I..........I
                 "Iron_islands":[((150,-200),(0,0,255),0),((1280,-600),(0,0,255),0)],#..M..S..eM.. 
                 "Wood_islands":[((150,-600),(0,0,255),0),((1280,-200),(0,0,255),0)],#W..........W
-                "Ship_islands":[((715,-400),(0,0,255),0)]},
+                "Ship_islands":[((715,-400),(0,0,255),0)],
+                "hint_e":"Capture the islands for iron and wood on your side and try to keep control over the shipyard in the middle of the map.",
+                "hint_d":"Besetz die Eisen- und Holzinsel auf deiner Seite um Resourcen zu sammeln und halte die Werft in der Mitte der Karte unter deiner Kontrolle."},
            "3":{"Main_islands":[((200,-400),(0,255,0),3),((1230,-400),(255,0,0),3)],#.pI..eI.
                 "Iron_islands":[((300,-200),(0,255,0),1),((1130,-200),(255,0,0),1)],#M..S..eM
                 "Wood_islands":[((300,-600),(0,255,0),1),((1130,-600),(255,0,0),1)],#.pW..eW.
@@ -87,7 +89,9 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
                 "Iron_islands":[((715,-400),(0,0,255),0)],                            #.M..I..eM.
                 "Wood_islands":[((500,-200),(0,0,255),0),((500,-600),(0,0,255),0),    #..W.S.W...
                                 ((930,-200),(0,0,255),0),((930,-600),(0,0,255),0)],
-                "Ship_islands":[((715,-200),(0,0,255),0),((715,-600),(0,0,255),0)]},
+                "Ship_islands":[((715,-200),(0,0,255),0),((715,-600),(0,0,255),0)],
+                "descr_e":"There is enough wood on the map, but you will have to fight for the iron.",
+                "descr_d":"Es gibt mehr als genug Holz auf dieser Karte, aber du wirst für das Eisen kämpfen müssen."},
            "10":{"Main_islands":[((200,-400),(0,255,0),3),((1230,-400),(255,0,0),3)],#.I....W.
                 "Iron_islands":[((300,-200),(0,255,0),1),((300,-600),(0,255,0),1)],  #M..S..eM
                 "Wood_islands":[((1130,-200),(255,0,0),1),((1130,-600),(255,0,0),1)],#.I....W.
@@ -103,7 +107,9 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
            "13":{"Main_islands":[((200,-400),(0,255,0),3),((1230,-200),(255,0,0),8),((1230,-600),(255,165,0),8)],#.I..W.eM  #2 enemies
                 "Iron_islands":[((300,-200),(0,0,255),0),((930,-600),(0,0,255),0)],                              #M..S....
                 "Wood_islands":[((300,-600),(0,0,255),0),((930,-200),(0,0,255),0)],                              #.W..I.eM
-                "Ship_islands":[((715,-400),(0,0,255),0)]},
+                "Ship_islands":[((715,-400),(0,0,255),0)],
+                "descr_e":"Now you have to fight to enemy empires. Lets hope that they destroy each other instead of us.",
+                "descr_d":"Jetzt musst du gegen zwei Feinde kämpfen. Hoffentlich bekämpfen sie sich gegenseitig, anstatt uns zu vernichten."},
            "14":{"Main_islands":[((200,-400),(255,0,0),5),((715,-300),(0,255,0),5),((1230,-400),(255,165,0),5)], #..I..M..W.  #2 enemies
                 "Iron_islands":[((300,-200),(0,0,255),0),((1130,-600),(0,0,255),0)],                              #.eM...eM.
                 "Wood_islands":[((300,-600),(0,0,255),0),((1130,-200),(0,0,255),0)],                              #..W..S..I.
@@ -117,48 +123,38 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
                 "Iron_islands":[((150,-317),(0,255,0),0,75),((150,-483),(0,255,0),0,75)],                                    #
                 "Wood_islands":[((150,-150),(0,255,0),0,75),((150,-650),(0,255,0),0,75)],                                    #
                 "Ship_islands":[((550,-400),(0,255,0),0,75),]},
+           "17":{"descr_e":"Not programmmed yet",
+                 "descr_d":"Noch nicht programmiert"},
+           "18":{"descr_e":"Not programmmed yet",
+                 "descr_d":"Noch nicht programmiert"},
+           "19":{"descr_e":"Not programmmed yet",
+                 "descr_d":"Noch nicht programmiert"},
+           "20":{"descr_e":"Not programmmed yet",
+                 "descr_d":"Noch nicht programmiert"},
+           "21":{"descr_e":"Not programmmed yet",
+                 "descr_d":"Noch nicht programmiert"},
+           "22":{"descr_e":"Not programmmed yet",
+                 "descr_d":"Noch nicht programmiert"},
+           "23":{"descr_e":"Not programmmed yet",
+                 "descr_d":"Noch nicht programmiert"},
+           "24":{"descr_e":"Not programmmed yet",
+                 "descr_d":"Noch nicht programmiert"},
+           "25":{"descr_e":"Not programmmed yet",
+                 "descr_d":"Noch nicht programmiert"},
            "101":{"Main_islands":[((200,-400),(0,255,0),25)],
                   "Iron_islands":[],
                   "Wood_islands":[((1230,-200),(255,0,0),8),((1230,-400),(255,0,0),8),((1230,-600),(255,0,0),8)],
                   "Ship_islands":[],
                   "Game mode":"Defend"},
+           "102":{"descr_e":"Not programmmed yet",
+                  "descr_d":"Noch nicht programmiert"},
+           "103":{"descr_e":"Not programmmed yet",
+                  "descr_d":"Noch nicht programmiert"},
+           "104":{"descr_e":"Not programmmed yet",
+                  "descr_d":"Noch nicht programmiert"},
+           "105":{"descr_e":"Not programmmed yet",
+                  "descr_d":"Noch nicht programmiert"},
            }
-
-level_descriptions = {#"-4":"You are the leader of the island with a green ring around it. Your aim is to conquer all the enemy islands on the map. Right click on your island to select it, then left click on the enemy island to send a ship.",
-                      #"-3":"On this map, there are three enemy islands. Conquer every one of them.",
-                      #"-2":"You can build more ships in the shipyard. For every new ship, you first need 5 pieces of iron and wood. You can see your resources in the top left corner of the screen.",
-                      #"-1":"The enemy can have ships too. If you want to win, you have to defeat them and take all their islands.",
-                      "0" :"If you want to win this map, you'll have to collect resources and build more ships. Don't let the enemy take the resource islands or the shipyard!",
-                      "1" :"It is time for your first real battle. Good luck!",
-                      "2" :"",
-                      "3" :"",
-                      "4" :"",
-                      "5" :"",
-                      "6" :"",
-                      "7" :"",
-                      "8" :"",
-                      "9" :"There is enough wood on the map, but you will have to fight for the iron.",
-                      "10":"",
-                      "11":"",
-                      "12":"",
-                      "13":"Now you have to fight to enemy empires. Lets hope that they destroy each other instead of us.",
-                      "14":"",
-                      "15":"",
-                      "16":"",
-                      "17":"Not programmed yet",
-                      "18":"Not programmed yet",
-                      "19":"Not programmed yet",
-                      "20":"Not programmed yet",
-                      "21":"Not programmed yet",
-                      "22":"Not programmed yet",
-                      "23":"Not programmed yet",
-                      "24":"Not programmed yet",
-                      "25":"Not programmed yet",
-                     "102":"Not programmed yet",
-                     "103":"Not programmed yet",
-                     "104":"Not programmed yet",
-                     "105":"Not programmed yet",
-                      }
 
 def create_sprites(level):
     islands = levels[str(level)]
