@@ -1452,11 +1452,11 @@ class Viewer(object):
                     if i.ships != 0:
                        write(self.screen, "{}".format(i.ships), x=i.pos[0]+i.size//2-10, y=-i.pos[1]+i.size//5+20,  fontsize=i.size//5, color=(1,1,1))
             
-            
-            boxlength = 100 #How many chars in a row
-            pygame.draw.rect(self.screen,(170,170,170),(Viewer.width//10,Viewer.height//10,Viewer.width//1.25,Viewer.height//1.25))
+            #AE9DFF
+            boxlength = 40 #How many chars in a row
+            pygame.draw.rect(self.screen,(125,125,250),(Viewer.width//10,Viewer.height//10,Viewer.width//1.25,Viewer.height//1.25)) #170,170,170grau
             if self.level_win_screen:
-                write(self.screen, text="You won the level!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
+                write(self.screen, text="You won the level!", x=Viewer.width//7, y=Viewer.height//3, color=(0,255,0), fontsize=100)
                 pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
                 write(self.screen, "Continue", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
                 continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
@@ -1472,27 +1472,25 @@ class Viewer(object):
                 pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
                 continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
                 if Game.language == "English":
-                    write(self.screen, text="You lost the level!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
-                    #try:
-                    #print("Game level: ", Game.level)
-                    
-                    for y, line in enumerate(structurize_text(Levels.levels[Game.level]["hint_e"],boxlength)):
-                        write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
-                    #except:
-                    #    for y, line in enumerate(structurize_text(motivation,boxlength)):
-                    #        write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
+                    write(self.screen, text="You lost the level!", x=Viewer.width//9, y=Viewer.height//8, color=(0,255,0), fontsize=100)
+                    try:
+                        for y, line in enumerate(structurize_text(Levels.levels[str(Game.level)]["hint_e"],boxlength)):
+                            write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
+                    except:
+                        for y, line in enumerate(structurize_text(motivation,boxlength)):
+                            write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
                     write(self.screen, "Try again", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
                 elif Game.language == "German":
                     write(self.screen, text="Du hast verloren!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
                     try:
-                        for y, line in enumerate(structurize_text(Levels.levels[Game.level]["hint_d"],boxlength)):
+                        for y, line in enumerate(structurize_text(Levels.levels[str(Game.level)]["hint_d"],boxlength)):
                             write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
                     except:
                         for y, line in enumerate(structurize_text(motivation,boxlength)):
                             write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
                     write(self.screen, "Erneut versuchen", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
             elif self.level_draw_screen:
-                write(self.screen, text="No one wins!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
+                write(self.screen, text="No one wins!", x=Viewer.width//7, y=Viewer.height//3, color=(0,255,0), fontsize=150)
                 pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
                 write(self.screen, "Play again", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
                 continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
