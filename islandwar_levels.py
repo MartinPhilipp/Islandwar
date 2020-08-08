@@ -12,15 +12,15 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
                 "Wood_islands":[],                                                   #...............
                 "Ship_islands":[],
                 "descr_e":"You are the leader of the island with a green ring around it. Your aim is to conquer all the enemy islands on the map. Right click on your island to select it, then left click on the enemy island to send a ship.",
-                "descr_d":"Du bist der Kommandant der Insel mit dem grünen Kreis herum. Dein Ziel ist es, alle gegnerischen Inseln zu besetzen. Mit einem Rechtsklick wählst du deine Insel aus, danach kannst du mit der linken Maustaste ein Schiff zur Insel des Gegners schicken.",
+                "descr_d":"Du bist der Kommandant der Insel mit dem grünen Kreis. Dein Ziel ist es, alle gegnerischen Inseln zu besetzen. Mit einem Rechtsklick wählst du Inseln aus, danach kannst du mit der linken Maustaste dein Schiff zur Insel des Gegners schicken.",
                 "hint_e":"You can't lose this level, you won't need hints",
                 "hint_d":"Dieses Level kann man nicht verlieren, man braucht keine Tipps."},
            "-3":{"Main_islands":[((300,-400),(0,255,0),3),((1130,-400),(255,0,0),0)],#.....I......
                 "Iron_islands":[((715,-200),(255,0,0),0)],                           #..M.....eM..
                 "Wood_islands":[((715,-600),(255,0,0),0)],                           #.....W......
                 "Ship_islands":[],
-                "descr_e":"On this map, there are three enemy islands. Conquer every one of them.",
-                "descr_d":"Auf dieser Karte sind drei feindliche Insel, die du besetzen musst.",
+                "descr_e":"On this map, there are three enemy islands. Conquer every one of them. You can use the arrow key to change the game speed.",
+                "descr_d":"Auf dieser Karte sind drei feindliche Insel, die du besetzen musst. Mit den Pfeiltasten kannst du die Spielgeschwindigkeit verändern.",
                 "hint_e":"You can't lose this level, you won't need hints",
                 "hint_d":"Dieses Level kann man nicht verlieren, man braucht keine Tipps."},
            "-2":{"Main_islands":[((300,-400),(0,255,0),0),((1130,-400),(255,0,0),0)],#....pI......
@@ -70,8 +70,8 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
                 "Wood_islands":[((515,-600),(0,0,255),0),((715,-600),(0,0,255),0),((915,-600),(0,0,255),0)],#..W.W.W..
                 "Ship_islands":[((715,-400),(0,0,255),0)]},
            "5":{"Main_islands":[((715,-250),(0,255,0),5),((715,-550),(255,0,0),5)], #I...M...I
-                "Iron_islands":[((200,-100),(0,0,255),0),((1230,-100),(0,0,255),0)],#..S...S..
-                "Wood_islands":[((200,-700),(0,0,255),0),((1230,-700),(0,0,255),0)],#W..eM...W
+                "Iron_islands":[((200,-130),(0,0,255),0),((1230,-130),(0,0,255),0)],#..S...S..
+                "Wood_islands":[((200,-670),(0,0,255),0),((1230,-670),(0,0,255),0)],#W..eM...W
                 "Ship_islands":[((476,-400),(0,0,255),0),((952,-400),(0,0,255),0)]},
            "6":{"Main_islands":[((200,-400),(0,255,0),3),((1230,-400),(255,0,0),5)],#...I.W...
                 "Iron_islands":[((515,-200),(0,0,255),0),((915,-600),(0,0,255),0)], #M...S..eM
@@ -108,7 +108,7 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
                 "Iron_islands":[((300,-200),(0,0,255),0),((930,-600),(0,0,255),0)],                              #M..S....
                 "Wood_islands":[((300,-600),(0,0,255),0),((930,-200),(0,0,255),0)],                              #.W..I.eM
                 "Ship_islands":[((715,-400),(0,0,255),0)],
-                "descr_e":"Now you have to fight to enemy empires. Lets hope that they destroy each other instead of us.",
+                "descr_e":"Now you have to fight two enemy empires. Lets hope that they destroy each other instead of us.",
                 "descr_d":"Jetzt musst du gegen zwei Feinde kämpfen. Hoffentlich bekämpfen sie sich gegenseitig, anstatt uns zu vernichten."},
            "14":{"Main_islands":[((200,-400),(255,0,0),5),((715,-300),(0,255,0),5),((1230,-400),(255,165,0),5)], #..I..M..W.  #2 enemies
                 "Iron_islands":[((300,-200),(0,0,255),0),((1130,-600),(0,0,255),0)],                              #.eM...eM.
@@ -118,11 +118,11 @@ levels = {#"Levelnr":{"Main_islands":[((pos1),(Color1),ships,opt:size), ((pos2),
                 "Iron_islands":[((200,-600),(0,0,255),0),((1230,-200),(0,0,255),0)],                              #S.eM.eM.S
                 "Wood_islands":[((200,-200),(0,0,255),0),((1230,-600),(0,0,255),0)],                              #I.......W
                 "Ship_islands":[((200,-400),(0,0,255),0),((1230,-400),(0,0,255),0)]},
-           "16":{"Main_islands":[((350,-150),(0,255,0),2,150),((350,-400),(0,255,0),5,150),((350,-650),(0,255,0),2,150),
+           "16":{"Main_islands":[((360,-150),(0,255,0),2,150),((360,-400),(0,255,0),5,150),((360,-650),(0,255,0),2,150),
                  ((1230,-200),(255,0,0),10,300),((1230,-600),(255,165,0),10,300)],                                           #Not complete
-                "Iron_islands":[((150,-317),(0,255,0),0,75),((150,-483),(0,255,0),0,75)],                                    #
-                "Wood_islands":[((150,-150),(0,255,0),0,75),((150,-650),(0,255,0),0,75)],                                    #
-                "Ship_islands":[((550,-400),(0,255,0),0,75),]},
+                "Iron_islands":[((170,-317),(0,255,0),0,75),((170,-483),(0,255,0),0,75)],                                    #
+                "Wood_islands":[((170,-150),(0,255,0),0,75),((170,-650),(0,255,0),0,75)],                                    #
+                "Ship_islands":[((560,-400),(0,255,0),0,75),]},
            "17":{"descr_e":"Not programmmed yet",
                  "descr_d":"Noch nicht programmiert"},
            "18":{"descr_e":"Not programmmed yet",
