@@ -115,9 +115,10 @@ class Game():
     level = 1
     player = 1  #Amount of players
     ship_size = (50,20) #default ship size
-    for l in Levels.levels.keys():
-        if int(l) <= 0:
-            level -= 1 #for every tutorial level we go one level below 0
+    #for l in Levels.levels.keys():
+    #    if int(l) <= 0:
+    #        level -= 1 #for every tutorial level we go one level below 0
+    # 5 Tutorial Levels (otherwise change level introduction screen)
     enemy_color = [(255,0,0),(255,165,0)]
     player_color = (0,255,0)
     neutral_color = (0,0,255)
@@ -643,7 +644,10 @@ class Wood_Island(Island):
             Game.player_wood += 0.3 * seconds * Game.speed
             if Game.player_wood >= Game.player_wood_int +1:
                 Game.player_wood_int +=1
-                Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Wood", color=(254, 254, 254), dy=-10)
+                if Game.language == "English":
+                    Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Wood", color=(254, 254, 254), dy=-10)
+                elif Game.language == "German":
+                    Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Holz", color=(254, 254, 254), dy=-10)
         elif self.empire_color == Game.enemy_color[0]:
             Game.enemy1_wood += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[1]:
@@ -677,7 +681,10 @@ class Iron_Island(Island):
             Game.player_iron += 0.3 * seconds * Game.speed
             if Game.player_iron >= Game.player_iron_int +1:
                 Game.player_iron_int +=1
-                Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Iron", color=(254, 254, 254), dy=-10)
+                if Game.language == "English":
+                    Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Iron", color=(254, 254, 254), dy=-10)
+                elif Game.language == "German":
+                    Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Eisen", color=(254, 254, 254), dy=-10)
         elif self.empire_color == Game.enemy_color[0]:
             Game.enemy1_iron += 0.3 * seconds * Game.speed
         elif self.empire_color == Game.enemy_color[1]:
@@ -718,6 +725,10 @@ class Ship_Island(Island):
                     if i.empire_color == Game.player_color:
                         ship_islands.append(i)
                 random.choice(ship_islands).ships += 1
+                if Game.language == "English":
+                    Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Ship", color=(254, 254, 254), dy=-10)
+                elif Game.language == "German":
+                    Flytext(x=self.pos.x, y=-self.pos.y-self.size/2, text="+1 Schiff", color=(254, 254, 254), dy=-10)
         elif self.empire_color == Game.enemy_color[0]:
             if Game.enemy1_iron >= 5 and Game.enemy1_wood >= 5:
                 Game.enemy1_iron -= 5
@@ -743,7 +754,7 @@ class Main_Island(Island):
 
     def __init__(self, **kwargs):
         Island.__init__(self, **kwargs)
-    
+
     def _overwrite_parameters(self):
         if self.size == None:
             self.size = 200 
@@ -867,6 +878,8 @@ class Viewer(object):
         self.level_lose_screen = False
         self.player_win_screen = False
         self.level_draw_screen = False
+        self.level_introduction_screen = False
+        self.menu_running = False
         #self.end_game = False
         #self.newlevel = False
         #self.end_gametime = 0
@@ -953,6 +966,7 @@ class Viewer(object):
             Viewer.images["main_island"] = pygame.image.load(resource_path(os.path.join("data", "main_island.png"))).convert_alpha()
             Viewer.images["wood_island"] = pygame.image.load(resource_path(os.path.join("data", "wood_island.png"))).convert_alpha()
             Viewer.images["iron_island"] = pygame.image.load(resource_path(os.path.join("data", "iron_island.png"))).convert_alpha()
+            Viewer.images["ship_island"] = pygame.image.load(resource_path(os.path.join("data", "ship_island.png"))).convert_alpha()
         elif Game.graphic == "J":
             #Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
             #Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island2.png")).convert_alpha()
@@ -960,6 +974,7 @@ class Viewer(object):
             Viewer.images["main_island"] = pygame.image.load(resource_path(os.path.join("data", "main_island2.png"))).convert_alpha()
             Viewer.images["wood_island"] = pygame.image.load(resource_path(os.path.join("data", "wood_island2.png"))).convert_alpha()
             Viewer.images["iron_island"] = pygame.image.load(resource_path(os.path.join("data", "iron_island2.png"))).convert_alpha()
+            Viewer.images["ship_island"] = pygame.image.load(resource_path(os.path.join("data", "ship_island2.png"))).convert_alpha()
         elif Game.graphic == "J2":
             #Viewer.images["main_island"] = pygame.image.load(os.path.join("data", "main_island2.png")).convert_alpha()
             #Viewer.images["wood_island"] = pygame.image.load(os.path.join("data", "wood_island3.png")).convert_alpha()
@@ -967,7 +982,45 @@ class Viewer(object):
             Viewer.images["main_island"] = pygame.image.load(resource_path(os.path.join("data", "main_island2.png"))).convert_alpha()
             Viewer.images["wood_island"] = pygame.image.load(resource_path(os.path.join("data", "wood_island3.png"))).convert_alpha()
             Viewer.images["iron_island"] = pygame.image.load(resource_path(os.path.join("data", "iron_island3.png"))).convert_alpha()
+            Viewer.images["ship_island"] = pygame.image.load(resource_path(os.path.join("data", "ship_island2.png"))).convert_alpha()
         Viewer.images["main_island"] = pygame.transform.scale(Viewer.images["main_island"], (200, 200))
+        
+        Viewer.images["tutorial1"] = pygame.image.load(resource_path(os.path.join("data", "tutorial1.png"))).convert_alpha()
+        Viewer.images["tutorial1"] = pygame.transform.scale(Viewer.images["tutorial1"], (300, 170))
+        Viewer.images["tutorial2"] = pygame.image.load(resource_path(os.path.join("data", "tutorial2.png"))).convert_alpha()
+        Viewer.images["tutorial2"] = pygame.transform.scale(Viewer.images["tutorial2"], (300, 170))
+        Viewer.images["tutorial3"] = pygame.image.load(resource_path(os.path.join("data", "tutorial3.png"))).convert_alpha()
+        Viewer.images["tutorial3"] = pygame.transform.scale(Viewer.images["tutorial3"], (300, 170))
+        Viewer.images["tutorial4"] = pygame.image.load(resource_path(os.path.join("data", "tutorial4.png"))).convert_alpha()
+        Viewer.images["tutorial4"] = pygame.transform.scale(Viewer.images["tutorial4"], (300, 170))
+        Viewer.images["tutorial5"] = pygame.image.load(resource_path(os.path.join("data", "tutorial5.png"))).convert_alpha()
+        Viewer.images["tutorial5"] = pygame.transform.scale(Viewer.images["tutorial5"], (300, 170))
+        
+        Viewer.images["level1"] = pygame.image.load(resource_path(os.path.join("data", "level1.png"))).convert_alpha()
+        Viewer.images["level1"] = pygame.transform.scale(Viewer.images["level1"], (300, 170))
+        Viewer.images["level2"] = pygame.image.load(resource_path(os.path.join("data", "level2.png"))).convert_alpha()
+        Viewer.images["level2"] = pygame.transform.scale(Viewer.images["level2"], (300, 170))
+        Viewer.images["level3"] = pygame.image.load(resource_path(os.path.join("data", "level3.png"))).convert_alpha()
+        Viewer.images["level3"] = pygame.transform.scale(Viewer.images["level3"], (300, 170))
+        Viewer.images["level4"] = pygame.image.load(resource_path(os.path.join("data", "level4.png"))).convert_alpha()
+        Viewer.images["level4"] = pygame.transform.scale(Viewer.images["level4"], (300, 170))
+        Viewer.images["level5"] = pygame.image.load(resource_path(os.path.join("data", "level5.png"))).convert_alpha()
+        Viewer.images["level5"] = pygame.transform.scale(Viewer.images["level5"], (300, 170))
+        Viewer.images["level6"] = pygame.image.load(resource_path(os.path.join("data", "level6.png"))).convert_alpha()
+        Viewer.images["level6"] = pygame.transform.scale(Viewer.images["level6"], (300, 170))
+        Viewer.images["level7"] = pygame.image.load(resource_path(os.path.join("data", "level7.png"))).convert_alpha()
+        Viewer.images["level7"] = pygame.transform.scale(Viewer.images["level7"], (300, 170))
+        Viewer.images["level8"] = pygame.image.load(resource_path(os.path.join("data", "level8.png"))).convert_alpha()
+        Viewer.images["level8"] = pygame.transform.scale(Viewer.images["level8"], (300, 170))
+        Viewer.images["level9"] = pygame.image.load(resource_path(os.path.join("data", "level9.png"))).convert_alpha()
+        Viewer.images["level9"] = pygame.transform.scale(Viewer.images["level9"], (300, 170))
+        Viewer.images["level10"] = pygame.image.load(resource_path(os.path.join("data", "level10.png"))).convert_alpha()
+        Viewer.images["level10"] = pygame.transform.scale(Viewer.images["level10"], (300, 170))
+        Viewer.images["level11"] = pygame.image.load(resource_path(os.path.join("data", "level11.png"))).convert_alpha()
+        Viewer.images["level11"] = pygame.transform.scale(Viewer.images["level11"], (300, 170))
+        Viewer.images["level12"] = pygame.image.load(resource_path(os.path.join("data", "level12.png"))).convert_alpha()
+        Viewer.images["level12"] = pygame.transform.scale(Viewer.images["level12"], (300, 170))
+        
         
     def clean_up(self):
         for i in Game.islandgroup:
@@ -1137,6 +1190,110 @@ class Viewer(object):
                     Game.enemy_ships += i.ships
                     Game.enemy_islands += 1
         
+        self.level_introduction_screen = True
+        self.levelscreen_run()
+        
+    def menu_enter(self, text, settings):
+        """Called from the menu_run when the player selects something in the menu"""
+        if text == "End the game" or text == "Beenden":
+            Game.quit_game = True
+            self.menu_running = False
+        elif text in settings:
+            # changing to another menu
+            Menu.history.append(text) 
+            Menu.name = text
+            Menu.cursor = 0
+        elif text == "Play" or text == "Spielen":
+            if len(Game.islandgroup) == 0:
+                self.new_level()
+            self.menu_running = False
+        elif text == "back" or text == "zurück":
+            Menu.history = Menu.history[:-1] # remove last entry
+            Menu.cursor = 0
+            Menu.name = Menu.history[-1] # get last entry
+        elif Menu.name == "Language" or Menu.name == "Sprache":
+            if text == "German" or text == "Deutsch":
+                Game.language = "German"
+                Menu.history = ["main"]
+                Menu.cursor = 0
+                Menu.name = "main"
+                self.menu_run()
+                self.menu_running = False
+            elif text == "English" or text == "Englisch":   
+                Game.language = "English"
+                Menu.history = ["main"]
+                Menu.cursor = 0
+                Menu.name = "main"
+                self.menu_run()
+                self.menu_running = False
+        elif Menu.name == "Screenresolution" or Menu.name == "Auflösung":
+            # text is something like 800x600
+            t = text.find("x")
+            if t != -1:
+                x = int(text[:t])
+                y = int(text[t+1:])
+                Viewer.width = x
+                Viewer.height = y
+                self.set_screenresolution()
+                self.prepare_sprites()
+        elif Menu.name == "Graphics" or Menu.name == "Grafik":
+            if text == "Ines' design" or text == "Ines Entwurf":
+                Game.graphic = "I"
+                self.load_graphics()
+                self.new_level()
+            elif text == "Julia's design" or text == "Julias Entwurf":
+                Game.graphic = "J"
+                self.load_graphics()
+                self.new_level()
+            elif text == "Julia's design 2" or text == "Julias 2.Entwurf":
+                Game.graphic = "J2"
+                self.load_graphics()
+                self.new_level()
+        elif Menu.name == "Multiplayer" or Menu.name == "Mehrspieler":
+            if text == "Single player" or text == "Einzelspieler":
+                Game.player = 1
+                Game.level = 1
+                self.new_level()
+            elif text == "1 vs. 1":
+                Game.player = 2
+                self.new_level()
+                self.menu_running = False
+        elif Menu.name == "Game speed" or Menu.name == "Geschwindigkeit":
+            if text == "Slow" or text == "Langsam":
+                Game.speed = 0.5
+            elif text == "Normal":
+                Game.speed = 1
+            elif text == "Fast" or text == "Schnell":
+                Game.speed = 3
+            elif text == "Really fast" or text == "Sehr schnell":
+                Game.speed = 5
+        elif Menu.name[0:6] == "Level ":
+            if text[6:] in Levels.levels.keys():
+                Game.level = int(text[6:])
+                self.new_level()
+                self.menu_running = False
+        elif text[0:8] == "Mission ":
+            Game.level = int(text[8:]) + 100
+            self.new_level()
+            self.menu_running = False
+        elif Menu.name == "Tutorial":
+            t = 0
+            for l in Levels.levels.keys():
+                if int(l) <= 0:
+                    t += 1
+            Game.level = (int(text[9:]))-t
+            self.new_level()
+            self.menu_running = False
+        elif Menu.name == "Fullscreen" or "Vollbildschirm":
+            if text == "True" or text == "Ja":
+                #Viewer.menucommandsound.play()
+                Viewer.fullscreen = True
+                self.set_screenresolution()
+            elif text == "False" or text == "Nein":
+                #Viewer.menucommandsound.play()
+                Viewer.fullscreen = False
+                self.set_screenresolution()
+
     def prepare_sprites(self):
         """painting on the surface and create sprites"""
         self.load_sprites()
@@ -1162,7 +1319,7 @@ class Viewer(object):
         #self.mouse4 = Mouse(control="joystick1", color=(255,128,255))
         #self.mouse5 = Mouse(control="joystick2", color=(255,255,255))
         
-        self.new_level()
+        #self.new_level()
 
     def send_ship(self, mouse_pos, island_selected, empire_color):
         """Tries to send a ship from one island to another."""
@@ -1189,10 +1346,11 @@ class Viewer(object):
         """Not The mainloop"""
         if Game.quit_game == True:
             return
-        running = True
+        self.menu_running = True
         #pygame.mouse.set_visible(False)
-        self.menu = True
-        while running:
+        oldleft, oldmiddle, oldright  = False, False, False
+        #self.menu = True
+        while self.menu_running:
             if Game.language == "English":
                 settings = Menu.menu_e
                 descr = Menu.descr_e
@@ -1203,16 +1361,24 @@ class Viewer(object):
             milliseconds = self.clock.tick(self.fps)
             seconds = milliseconds / 1000
             text = settings[Menu.name][Menu.cursor]
+            
             # -------- events ------
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     Game.quit_game = True
-                    running = False
+                    self.menu_running = False
                 # ------- pressed and released key ------
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        return
+                        #return
                         #running = False
+                        if len(Menu.history) > 1:
+                            Menu.history = Menu.history[:-1] # remove last entry
+                            Menu.cursor = 0
+                            Menu.name = Menu.history[-1] # get last entry
+                        else:
+                            Game.quit_game = True
+                            self.menu_running = False
                     if event.key == pygame.K_UP:
                         Menu.cursor -= 1
                         Menu.cursor = max(0, Menu.cursor) # not < 0
@@ -1222,102 +1388,7 @@ class Viewer(object):
                         Menu.cursor = min(len(settings[Menu.name])-1,Menu.cursor) # not > menu entries
                         #Viewer.menusound.play()
                     if event.key == pygame.K_RETURN:
-                        if text == "End the game" or text == "Beenden":
-                            Game.quit_game = True
-                            running = False
-                        elif text in settings:
-                            # changing to another menu
-                            Menu.history.append(text) 
-                            Menu.name = text
-                            Menu.cursor = 0
-                        elif text == "Play" or text == "Spielen":
-                            running = False
-                        elif text == "back" or text == "zurück":
-                            Menu.history = Menu.history[:-1] # remove last entry
-                            Menu.cursor = 0
-                            Menu.name = Menu.history[-1] # get last entry
-                        elif Menu.name == "Language" or Menu.name == "Sprache":
-                            if text == "German" or text == "Deutsch":
-                                Game.language = "German"
-                                Menu.history = ["main"]
-                                Menu.cursor = 0
-                                Menu.name = "main"
-                                self.menu_run()
-                                return
-                            elif text == "English" or text == "Englisch":   
-                                Game.language = "English"
-                                Menu.history = ["main"]
-                                Menu.cursor = 0
-                                Menu.name = "main"
-                                self.menu_run()
-                                return
-                        elif Menu.name == "Screenresolution" or Menu.name == "Auflösung":
-                            # text is something like 800x600
-                            t = text.find("x")
-                            if t != -1:
-                                x = int(text[:t])
-                                y = int(text[t+1:])
-                                Viewer.width = x
-                                Viewer.height = y
-                                self.set_screenresolution()
-                                self.prepare_sprites()
-                        elif Menu.name == "Graphics" or Menu.name == "Grafik":
-                            if text == "Ines' design" or text == "Ines Entwurf":
-                                Game.graphic = "I"
-                                self.load_graphics()
-                                self.new_level()
-                            elif text == "Julia's design" or text == "Julias Entwurf":
-                                Game.graphic = "J"
-                                self.load_graphics()
-                                self.new_level()
-                            elif text == "Julia's design 2" or text == "Julias 2.Entwurf":
-                                Game.graphic = "J2"
-                                self.load_graphics()
-                                self.new_level()
-                        elif Menu.name == "Multiplayer" or Menu.name == "Mehrspieler":
-                            if text == "Single player" or text == "Einzelspieler":
-                                Game.player = 1
-                                Game.level = 1
-                                self.new_level()
-                            elif text == "1 vs. 1":
-                                Game.player = 2
-                                self.new_level()
-                                return
-                        elif Menu.name == "Game speed" or Menu.name == "Geschwindigkeit":
-                            if text == "Slow" or text == "Langsam":
-                                Game.speed = 0.5
-                            elif text == "Normal":
-                                Game.speed = 1
-                            elif text == "Fast" or text == "Schnell":
-                                Game.speed = 3
-                            elif text == "Really fast" or text == "Sehr schnell":
-                                Game.speed = 5
-                        elif Menu.name[0:6] == "Level ":
-                            if text[6:] in Levels.levels.keys():
-                                Game.level = int(text[6:])
-                                self.new_level()
-                                running = False
-                        elif text[0:8] == "Mission ":
-                            Game.level = int(text[8:]) + 100
-                            self.new_level()
-                            running = False
-                        elif Menu.name == "Tutorial":
-                            t = 0
-                            for l in Levels.levels.keys():
-                                if int(l) <= 0:
-                                    t += 1
-                            Game.level = (int(text[9:]))-t
-                            self.new_level()
-                            running = False
-                        elif Menu.name == "Fullscreen" or "Vollbildschirm":
-                            if text == "True" or text == "Ja":
-                                #Viewer.menucommandsound.play()
-                                Viewer.fullscreen = True
-                                self.set_screenresolution()
-                            elif text == "False" or text == "Nein":
-                                #Viewer.menucommandsound.play()
-                                Viewer.fullscreen = False
-                                self.set_screenresolution()
+                        self.menu_enter(text, settings)
                             
             # ------delete everything on screen-------
             self.screen.blit(self.background, (0, 0))
@@ -1340,16 +1411,7 @@ class Viewer(object):
             
             self.flytextgroup.draw(self.screen)
 
-            # --- paint menu ----
-            # ---- name of active menu and history ---
-            write(self.screen, text="You are here:", x=200, y=50, color=(0,255,255), fontsize=15)
-            
-            t = "main"
-            for nr, i in enumerate(Menu.history[1:]):
-                #if nr > 0:
-                t+=(" > ")
-                t+=(i)
-            write(self.screen, text=t, x=200,y=70,color=(0,255,255), fontsize=15)
+            # ----------------------- paint menu -----------------------
             # --- menu items ---
             menu = settings[Menu.name]
             for y, item in enumerate(menu):
@@ -1401,9 +1463,25 @@ class Viewer(object):
                         write(self.screen, text=line, x=Viewer.width//2-100, y=100+y*30, color=(255,0,255), fontsize=20)
            # ---- menu_images -----
             if text in Menu.menu_images:
-                Viewer.images[Menu.menu_images[text]] = pygame.transform.scale(Viewer.images[Menu.menu_images[text]], (300, 300))
+                if Menu.menu_images[text][:8] != "tutorial" and Menu.menu_images[text][:5] != "level":
+                    Viewer.images[Menu.menu_images[text]] = pygame.transform.scale(Viewer.images[Menu.menu_images[text]], (300, 300))
                 self.screen.blit(Viewer.images[Menu.menu_images[text]], (1020,100))
-                
+            
+            # -------- clicking --------
+            left,middle,right = pygame.mouse.get_pressed()
+            if oldleft and not left:
+                mouse_pos = pygame.mouse.get_pos()
+                if 200 < mouse_pos[0] < 550:
+                    if 90 < mouse_pos[1] < 540:
+                        for y, item in enumerate(settings[Menu.name]):
+                            if (90+y*50) < mouse_pos[1] < (90+y*50+50):
+                                if Menu.cursor != y:
+                                    Menu.cursor = y
+                                else:
+                                    self.menu_enter(text, settings)
+                                break
+            oldleft, oldmiddle, oldright = left, middle, right
+            
             # -------- next frame -------------
             pygame.display.flip()
     
@@ -1455,22 +1533,22 @@ class Viewer(object):
             #AE9DFF
             boxlength = 40 #How many chars in a row
             pygame.draw.rect(self.screen,(125,125,250),(Viewer.width//10,Viewer.height//10,Viewer.width//1.25,Viewer.height//1.25)) #170,170,170grau
+            pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5+40,200,50)) #Button to continue
+            continue_button = [Viewer.width//2,Viewer.height//1.5+40,200,50]
             if self.level_win_screen:
                 write(self.screen, text="You won the level!", x=Viewer.width//7, y=Viewer.height//3, color=(0,255,0), fontsize=100)
-                pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
-                write(self.screen, "Continue", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
-                continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+                write(self.screen, "Continue", x=Viewer.width//2+10, y=Viewer.height//1.5+50)
             elif self.player_win_screen:
                 if Game.enemy_ships == 0 and Game.enemy_islands == 0:
                     write(self.screen, text="The green Player wins!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
                 elif Game.player_ships == 0 and Game.player_islands == 0:
                     write(self.screen, text="The red Player wins!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
-                pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
-                write(self.screen, "Again!", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
-                continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+                #pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5+40,200,50))
+                write(self.screen, "Again!", x=Viewer.width//2+10, y=Viewer.height//1.5+50)
+                #continue_button = [Viewer.width//2,Viewer.height//1.5+40,200,50]
             elif self.level_lose_screen:
-                pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
-                continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+                #pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5+40,200,50))
+                #continue_button = [Viewer.width//2,Viewer.height//1.5+40,200,50]
                 if Game.language == "English":
                     write(self.screen, text="You lost the level!", x=Viewer.width//9, y=Viewer.height//8, color=(0,255,0), fontsize=100)
                     try:
@@ -1479,7 +1557,7 @@ class Viewer(object):
                     except:
                         for y, line in enumerate(structurize_text(motivation,boxlength)):
                             write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
-                    write(self.screen, "Try again", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
+                    write(self.screen, "Try again", x=Viewer.width//2+10, y=Viewer.height//1.5+50)
                 elif Game.language == "German":
                     write(self.screen, text="Du hast verloren!", x=Viewer.width//5, y=Viewer.height//5, color=(0,255,0), fontsize=50)
                     try:
@@ -1488,30 +1566,56 @@ class Viewer(object):
                     except:
                         for y, line in enumerate(structurize_text(motivation,boxlength)):
                             write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
-                    write(self.screen, "Erneut versuchen", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
+                    write(self.screen, "Erneut versuchen", x=Viewer.width//2+10, y=Viewer.height//1.5+50)
             elif self.level_draw_screen:
                 write(self.screen, text="No one wins!", x=Viewer.width//7, y=Viewer.height//3, color=(0,255,0), fontsize=150)
-                pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
-                write(self.screen, "Play again", x=Viewer.width//2+10, y=Viewer.height//1.5+10)
-                continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+                #pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
+                write(self.screen, "Play again", x=Viewer.width//2+10, y=Viewer.height//1.5+50)
+                #continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
                 
-            pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2-250,Viewer.height//1.5,210,50))
-            write(self.screen, "Return to menu", x=Viewer.width//2-240, y=Viewer.height//1.5+10)
-            return_button = [Viewer.width//2-250,Viewer.height//1.5,210,50]
+            elif self.level_introduction_screen:
+                #pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2,Viewer.height//1.5,200,50))
+                #continue_button = [Viewer.width//2,Viewer.height//1.5,200,50]
+                if Game.level <= 0:
+                    write(self.screen, text="Tutorial " + str(5+Game.level), x=Viewer.width//9, y=Viewer.height//8, color=(0,255,0), fontsize=100)
+                else:
+                    write(self.screen, text="Level " + str(Game.level), x=Viewer.width//9, y=Viewer.height//8, color=(0,255,0), fontsize=100)
+                if Game.language == "English":
+                    try:
+                        for y, line in enumerate(structurize_text(Levels.levels[str(Game.level)]["descr_e"],boxlength)):
+                            write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
+                    except:
+                        write(self.screen, text="", x=Viewer.width//5, y=Viewer.height//5+100, color=(0,255,0), fontsize=40)
+                    write(self.screen, "Let's go!", x=Viewer.width//2+10, y=Viewer.height//1.5+50)
+                elif Game.language == "German":
+                    try:
+                        for y, line in enumerate(structurize_text(Levels.levels[str(Game.level)]["descr_d"],boxlength)):
+                            write(self.screen, text=line, x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
+                    except:
+                        write(self.screen, text="", x=Viewer.width//5, y=Viewer.height//5+50+50*y, color=(0,255,0), fontsize=40)
+                    write(self.screen, "Los geht's!", x=Viewer.width//2+10, y=Viewer.height//1.5+50)
+            pygame.draw.rect(self.screen,(0,200,200),(Viewer.width//2-250,Viewer.height//1.5+40,210,50))
+            if Game.language == "English":
+                write(self.screen, "Return to menu", x=Viewer.width//2-240, y=Viewer.height//1.5+50)
+            elif Game.language == "German":
+                write(self.screen, "Zum Menü", x=Viewer.width//2-240, y=Viewer.height//1.5+50)
+            return_button = [Viewer.width//2-250,Viewer.height//1.5+40,210,50]
             
             left,middle,right = pygame.mouse.get_pressed()
             if oldleft and not left:
                 mouse_pos = pygame.mouse.get_pos()
                 if mouse_pos[0] >= continue_button[0] and mouse_pos[0] <= (continue_button[0]+continue_button[2]):
                     if mouse_pos[1] >= continue_button[1] and mouse_pos[1] <= (continue_button[1]+continue_button[3]):
-                        print("Next level!")
                         if self.level_win_screen or self.player_win_screen:
                             Game.level += 1
-                        self.new_level()
+                            self.new_level()
+                        elif self.level_lose_screen or self.level_draw_screen:
+                            self.new_level()
+                        elif self.level_introduction_screen:
+                            self.level_introduction_screen = False
                         running = False
                 if mouse_pos[0] >= return_button[0] and mouse_pos[0] <= (return_button[0]+return_button[2]):
                     if mouse_pos[1] >= return_button[1] and mouse_pos[1] <= (return_button[1]+return_button[3]):
-                        print("Menu!")
                         self.menu_run()
                         running = False
             #pygame.draw.rect(self.screen,(230,230,230),(1000,90,350,450))
@@ -1599,14 +1703,18 @@ class Viewer(object):
             level = Game.level
             # write text below sprites
             write(self.screen, "FPS: {:8.3}".format(
-                self.clock.get_fps() ), x=10, y=40)
-            write(self.screen, "Wood = {}".format(Game.player_wood_int), x=10,y=70)
-            write(self.screen, "Iron = {}".format(Game.player_iron_int), x=10,y=100)
-            write(self.screen, "Ships = {:.0f}".format(Game.player_ships), x=10,y=130)
+                self.clock.get_fps() ), x=5, y=30)
+
             if Game.language == "English":
-                write(self.screen, "Game speed: {}x".format(Game.speed), x=10, y=10)
+                write(self.screen, "Game speed: {}x".format(Game.speed), x=5, y=5)
+                write(self.screen, "Wood = {}".format(Game.player_wood_int), x=5,y=105)
+                write(self.screen, "Iron = {}".format(Game.player_iron_int), x=5,y=80)
+                write(self.screen, "Ships = {:.0f}".format(Game.player_ships), x=5,y=55)
             elif Game.language == "German":
-                write(self.screen, "Geschwindigkeit: {}x".format(Game.speed), x=10, y=10)
+                write(self.screen, "Geschwindigkeit: {}x".format(Game.speed), x=5, y=5)
+                write(self.screen, "Holz = {}".format(Game.player_wood_int), x=5,y=105)
+                write(self.screen, "Eisen = {}".format(Game.player_iron_int), x=5,y=80)
+                write(self.screen, "Schiffe = {:.0f}".format(Game.player_ships), x=5,y=55)
             
             if level <= 0:
                 for l in Levels.levels.keys():
