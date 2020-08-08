@@ -1596,13 +1596,18 @@ class Viewer(object):
             # ------------ pressed keys ------
             pressed_keys = pygame.key.get_pressed()
 
+            level = Game.level
             # write text below sprites
             write(self.screen, "FPS: {:8.3}".format(
-                self.clock.get_fps() ), x=10, y=10)
-            write(self.screen, "Wood = {}".format(Game.player_wood_int), x=10,y=30)
-            write(self.screen, "Iron = {}".format(Game.player_iron_int), x=10,y=50)
-            write(self.screen, "Ships = {:.0f}".format(Game.player_ships), x=10,y=80)
-            level = Game.level
+                self.clock.get_fps() ), x=10, y=40)
+            write(self.screen, "Wood = {}".format(Game.player_wood_int), x=10,y=70)
+            write(self.screen, "Iron = {}".format(Game.player_iron_int), x=10,y=100)
+            write(self.screen, "Ships = {:.0f}".format(Game.player_ships), x=10,y=130)
+            if Game.language == "English":
+                write(self.screen, "Game speed: {}x".format(Game.speed), x=10, y=10)
+            elif Game.language == "German":
+                write(self.screen, "Geschwindigkeit: {}x".format(Game.speed), x=10, y=10)
+            
             if level <= 0:
                 for l in Levels.levels.keys():
                     if int(l) <= 0:
@@ -1623,7 +1628,7 @@ class Viewer(object):
             except:
                 lines = []
             for y, line in enumerate(lines):
-                write(self.screen, line, x=200, y=50+y*25)
+                write(self.screen, line, x=250, y=50+y*25)
 
             self.update_gamevariables()
             # ------------------win or lose --------------------
