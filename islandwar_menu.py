@@ -95,6 +95,26 @@ menu_images = {"Main island" : "main_island",
                "Holzinsel"   : "wood_island",
                "Eiseninsel"  : "iron_island",
                "Werftinsel"  : "ship_island",
+               
+               "Tutorial 1"  : "tutorial1",
+               "Tutorial 2"  : "tutorial2",
+               "Tutorial 3"  : "tutorial3",
+               "Tutorial 4"  : "tutorial4",
+               "Tutorial 5"  : "tutorial5",
+               
+               "Level 1"  : "level1",
+               "Level 2"  : "level2",
+               "Level 3"  : "level3",
+               "Level 4"  : "level4",
+               "Level 5"  : "level5",
+               "Level 6"  : "level6",
+               "Level 7"  : "level7",
+               "Level 8"  : "level8",
+               "Level 9"  : "level9",
+               "Level 10"  : "level10",
+               "Level 11"  : "level11",
+               "Level 12"  : "level12",
+               
                }
 linelength = 27
 history = ["main"]
