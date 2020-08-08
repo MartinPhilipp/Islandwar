@@ -44,7 +44,7 @@ descr_e = {"Resume"      :"Resume to the game",
          
          
           
-menu_d = {"main":       ["Play", "Tutorial", "Levels", "Kampagne", "Mehrspieler", "Hilfe", "Entwickler", "Einstellungen","Beenden"],
+menu_d = {"main":       ["Spielen", "Tutorial", "Levels", "Kampagne", "Mehrspieler", "Hilfe", "Entwickler", "Einstellungen","Beenden"],
         "Tutorial":   ["zurück", "Tutorial 1", "Tutorial 2", "Tutorial 3", "Tutorial 4", "Tutorial 5"],
         "Levels":     ["zurück", "Level 1-4", "Level 5-9", "Level 10-14", "Level 15-19", "Level 20-25"],
         "Level 1-4":  ["zurück", "Tutorial", "Level 1", "Level 2", "Level 3", "Level 4"],
@@ -81,7 +81,7 @@ descr_d = {"Zurück"       :"Zurück zum Spiel",
          "Holzinsel"      :"Wenn du diese Insel besitzt bekommst du jede Sekunde Holz",
          "Eiseninsel"     :"Wenn du diese Insel besitzt bekommst du jede Sekunde Eisen",
          "Werftinsel"     :"Auf dieser Insel ist eine Werft, die ein neues Schiff produziert, sobald du 5 Stücke Holz und 5 Barren Eisen hast.",
-         "Kampagne"       :"Wenn die ein_e gute_r Geschichtenschreiber_in bist kontaktiere uns!",
+         "Kampagne"       :"Wenn du ein_e gute_r Geschichtenschreiber_in bist kontaktiere uns!",
          "Grafik"         :"Verändere das Aussehen des Spiels",
          "Geschwindigkeit":"Ändere die Geschwindigkeit des Spiels",
          }
